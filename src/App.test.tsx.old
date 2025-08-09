@@ -1,4 +1,4 @@
-import {HttpResponse, http} from 'msw'
+/*import {HttpResponse, http} from 'msw'
 import {App} from './App'
 import {server} from './mocks/server'
 import {queryClient, render, screen} from './test-utils'
@@ -34,4 +34,4 @@ it('renders error', async () => {
 	await expect(
 		screen.findByText('Failed to fetch')
 	).resolves.toBeInTheDocument()
-})
+})*/
