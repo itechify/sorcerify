@@ -64,7 +64,8 @@
 								"entropyThreshold": 100
 							}
 						},
-						"noExcessiveLinesPerFunction": "off"
+						"noExcessiveLinesPerFunction": "off",
+						"useSortedClasses": "warn"
 					},
 					"suspicious": {
 						"noReactSpecificProps": "off"

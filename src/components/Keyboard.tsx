@@ -1,7 +1,8 @@
 import {useMemo} from 'react'
 
 interface Properties {
-	guessed: Set<string>
+	correct: Set<string>
+	incorrect: Set<string>
 	onPress: (char: string) => void
 	disabled?: boolean
 }
@@ -11,8 +12,14 @@ const DIGITS = '0123456789'.split('')
 const EMOJIS = ['💨', '⛰️', '🔥', '💧']
 const LETTER_RE = /[a-zA-Z]/
 
-export function Keyboard({guessed, onPress, disabled = false}: Properties) {
-	const guessedSet = guessed
+export function Keyboard({
+	correct,
+	incorrect,
+	onPress,
+	disabled = false
+}: Properties) {
+	const correctSet = correct
+	const incorrectSet = incorrect
 	const keys = useMemo(() => {
 		return [...LETTERS, ...DIGITS, ...EMOJIS]
 	}, [])
@@ -21,21 +28,27 @@ export function Keyboard({guessed, onPress, disabled = false}: Properties) {
 		<div className='flex max-w-[740px] flex-wrap justify-center gap-2 px-2'>
 			{keys.map(k => {
 				const normalized = LETTER_RE.test(k) ? k.toLowerCase() : k
-				const isGuessed = guessedSet.has(normalized)
+				const isIncorrect = incorrectSet.has(normalized)
+				const isCorrect = correctSet.has(normalized)
+				const isUsed = isIncorrect || isCorrect
+
+				let variant =
+					' bg-white text-slate-900 border-slate-300 hover:bg-slate-100 active:bg-slate-200'
+				if (isIncorrect)
+					variant = ' bg-red-600 text-white border-red-700 cursor-not-allowed'
+				else if (isCorrect)
+					variant =
+						' bg-emerald-600 text-white border-emerald-700 cursor-not-allowed'
+
 				return (
 					<button
 						aria-label={`Key ${k}`}
-						aria-pressed={isGuessed}
-						className={
-							'min-w-9 select-none rounded-md px-3 py-2 font-semibold text-sm shadow transition' +
-							(isGuessed
-								? 'cursor-not-allowed bg-slate-600 text-slate-300'
-								: 'bg-slate-200 hover:bg-slate-300 active:bg-slate-400')
-						}
-						disabled={disabled || isGuessed}
+						aria-pressed={isUsed}
+						className={`min-w-9 select-none rounded-md border px-3 py-2 font-semibold text-sm shadow transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400${variant}`}
+						disabled={disabled || isUsed}
 						key={k}
 						onClick={() => onPress(k)}
-						title={isGuessed ? 'Already guessed' : `Guess ${k}`}
+						title={isUsed ? 'Already guessed' : `Guess ${k}`}
 						type='button'
 					>
 						{k}
