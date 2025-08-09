@@ -37,7 +37,7 @@ export function Practice() {
 		<>
 			<Head title='Sorcerify — Practice' />
 			<NavBar />
-			<div className='m-2 grid min-h-[calc(100vh-56px)] content-start justify-items-center pt-4'>
+			<div className='grid min-h-[calc(100vh-56px)] content-start justify-items-center pt-4 bg-slate-950'>
 				<div className='flex flex-col items-center gap-3'>
 					<img
 						alt='Sorcerify'

@@ -71,5 +71,5 @@ export type Card = v.InferOutput<typeof CardSchema>
 const Cards = v.array(CardSchema)
 
 export function getCards() {
-    return Promise.resolve(v.parse(Cards, cards))
+	return Promise.resolve(v.parse(Cards, cards))
 }
