@@ -139,7 +139,11 @@ export function GameBoard({card}: {card: Card}) {
 	return (
 		<div className='flex flex-col items-center gap-6'>
 			<div className='relative'>
-				<SorceryCard card={card} guessed={guessed} />
+				<SorceryCard
+					card={card}
+					guessed={guessed}
+					revealAll={hasWon || hasLost}
+				/>
 				{hasWon && (
 					<div className='absolute inset-0 grid place-items-center rounded-3xl bg-green-600/20 backdrop-blur-[1px]'>
 						<span className='rounded-full bg-green-700/80 px-4 py-2 font-bold text-lg text-white shadow'>

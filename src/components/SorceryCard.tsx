@@ -57,15 +57,19 @@ function maskText(text: string, guessed: Set<string>): string {
 export function SorceryCard({
 	card,
 	width = 320,
-	guessed
+	guessed,
+	revealAll = false
 }: {
 	card: Card
 	width?: number
 	guessed: Set<string>
+	revealAll?: boolean
 }) {
 	const g = card.guardian
 	const thresholdIcons = renderThresholds(g.thresholds)
 	const stats = statDisplay(g.attack, g.defence)
+
+	const show = (text: string) => (revealAll ? text : maskText(text, guessed))
 
 	return (
 		<div
@@ -77,27 +81,23 @@ export function SorceryCard({
 				<div className='flex items-center justify-between'>
 					<div className='flex items-center gap-2'>
 						<span className='inline-flex items-center gap-1 rounded-full bg-black/50 px-2 py-1 font-semibold text-slate-100 tracking-wider'>
-							<span className='tabular-nums'>
-								{maskText(String(g.cost), guessed)}
-							</span>
+							<span className='tabular-nums'>{show(String(g.cost))}</span>
 							{thresholdIcons && (
-								<span title='Thresholds'>
-									{maskText(thresholdIcons, guessed)}
-								</span>
+								<span title='Thresholds'>{show(thresholdIcons)}</span>
 							)}
 						</span>
 					</div>
 
 					{stats && (
 						<div className='rounded-full bg-black/60 px-3 py-1 font-bold text-slate-100 tabular-nums tracking-wider'>
-							{maskText(stats, guessed)}
+							{show(stats)}
 						</div>
 					)}
 				</div>
 
 				{/* Title */}
 				<div className='mt-2 rounded-md bg-black/40 px-3 py-2 font-semibold text-lg text-slate-100 tracking-wider shadow-inner'>
-					{maskText(card.name, guessed)}
+					{show(card.name)}
 				</div>
 
 				{/* Spacer to mimic art space */}
@@ -105,13 +105,13 @@ export function SorceryCard({
 
 				{/* Type line */}
 				<div className='rounded-md bg-black/50 px-3 py-1 font-medium text-slate-200/90 text-sm tracking-wider'>
-					{maskText(card.sets?.[0]?.variants?.[0]?.typeText ?? '', guessed)}
+					{show(card.sets?.[0]?.variants?.[0]?.typeText ?? '')}
 				</div>
 
 				{/* Rules box */}
 				<div className='mt-2 rounded-xl border border-slate-600/50 bg-black/55 p-3'>
 					<p className='whitespace-pre-line text-slate-200/90 text-sm leading-snug tracking-wider'>
-						{maskText(g.rulesText, guessed)}
+						{show(g.rulesText)}
 					</p>
 				</div>
 			</div>
