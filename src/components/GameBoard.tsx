@@ -38,6 +38,10 @@ export function GameBoard({
 	const [remaining, setRemaining] = useState<number>(7)
 	const [hasWon, setHasWon] = useState<boolean>(false)
 	const [nameGuessSelection, setNameGuessSelection] = useState<string>('')
+	const [nameGuessStatus, setNameGuessStatus] = useState<'incorrect' | null>(
+		null
+	)
+	const nameGuessStatusTimeoutRef = useRef<number | null>(null)
 	const nameGuessedRef = useRef<Set<string>>(new Set())
 	const id = useId()
 	// removed maskable token set; masking of fields is handled inside card rendering
@@ -123,6 +127,15 @@ export function GameBoard({
 		return () => window.removeEventListener('keydown', onKeyDown)
 	}, [hasWon, remaining, handlePress])
 
+	// Clear any pending timeout on unmount
+	useEffect(() => {
+		return () => {
+			if (nameGuessStatusTimeoutRef.current != null) {
+				window.clearTimeout(nameGuessStatusTimeoutRef.current)
+			}
+		}
+	}, [])
+
 	const submitNameGuess = useCallback(
 		(nameValue: string) => {
 			if (!nameValue || hasWon || remaining <= 0) return
@@ -131,6 +144,15 @@ export function GameBoard({
 				nameGuessedRef.current.add(nameValue)
 				if (nameValue === card.name) {
 					setHasWon(true)
+				} else {
+					// transient feedback for incorrect name guess
+					setNameGuessStatus('incorrect')
+					if (nameGuessStatusTimeoutRef.current != null) {
+						window.clearTimeout(nameGuessStatusTimeoutRef.current)
+					}
+					nameGuessStatusTimeoutRef.current = window.setTimeout(() => {
+						setNameGuessStatus(null)
+					}, 1500)
 				}
 				setRemaining(prev => Math.max(0, prev - 1))
 			}
@@ -258,6 +280,14 @@ export function GameBoard({
 				>
 					Guess name
 				</button>
+				{nameGuessStatus === 'incorrect' && (
+					<output
+						aria-live='polite'
+						className='ml-2 select-none text-sm font-semibold text-red-600'
+					>
+						Incorrect name
+					</output>
+				)}
 			</div>
 			<Keyboard
 				correct={correct}

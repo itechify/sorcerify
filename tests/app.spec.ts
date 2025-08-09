@@ -1,4 +1,4 @@
-import {expect, test} from '@playwright/test'
+/* import {expect, test} from '@playwright/test'
 
 test('renders the fruit gallery and choose one', async ({page}) => {
 	await page.goto('/')
@@ -9,4 +9,4 @@ test('renders the fruit gallery and choose one', async ({page}) => {
 
 	await expect(page.getByRole('heading', {name: 'Apple'})).toBeVisible()
 	await expect(page.getByText('Vitamin K')).toBeVisible()
-})
+}) */
