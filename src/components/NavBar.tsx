@@ -51,7 +51,7 @@ export function NavBar() {
 	function navLinkClass(isActive: boolean): string {
 		const base = 'px-3 py-1.5 text-sm font-medium rounded-md'
 		const active = 'bg-slate-900 text-white'
-		const inactive = 'text-white hover:bg-slate-900 active:bg-slate-200'
+		const inactive = 'text-white hover:bg-slate-900 active:bg-slate-600'
 		return `${base} ${isActive ? active : inactive}`
 	}
 
