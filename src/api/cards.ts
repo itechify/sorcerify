@@ -1,4 +1,5 @@
 import * as v from 'valibot'
+import cards from '@/mocks/data/cards.json' with {type: 'json'}
 
 /** Reusable pieces */
 const ThresholdsSchema = v.object({
@@ -69,11 +70,6 @@ export type Card = v.InferOutput<typeof CardSchema>
 
 const Cards = v.array(CardSchema)
 
-export async function getCards() {
-	// Use a local path and rely on the dev server proxy to reach the public API
-	const response = await fetch('/cards')
-	if (!response.ok) {
-		throw new Error('Failed to fetch')
-	}
-	return v.parse(Cards, await response.json())
+export function getCards() {
+    return Promise.resolve(v.parse(Cards, cards))
 }
