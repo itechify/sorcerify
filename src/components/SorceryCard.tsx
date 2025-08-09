@@ -1,0 +1,80 @@
+import type {Card} from '@/api/cards'
+
+/** ===== Helpers ===== */
+type Thresholds = Card['guardian']['thresholds']
+
+const THRESHOLD_EMOJI: Record<keyof Thresholds, string> = {
+	air: '💨',
+	earth: '⛰️',
+	fire: '🔥',
+	water: '💧'
+}
+
+function renderThresholds(t: Thresholds) {
+	const parts: string[] = []
+	for (const k of Object.keys(t) as (keyof Thresholds)[]) {
+		const n = t[k] ?? 0
+		if (n > 0) parts.push(THRESHOLD_EMOJI[k].repeat(n))
+	}
+	return parts.join('')
+}
+
+function statDisplay(attack: number | null, defence: number | null) {
+	if (attack == null && defence == null) return ''
+	if (attack === defence) return String(attack ?? defence ?? '')
+	return `${attack ?? '-'}/${defence ?? '-'}`
+}
+
+/** ===== Component ===== */
+export function SorceryCard({card, width = 320}: {card: Card; width?: number}) {
+	const g = card.guardian
+	const thresholdIcons = renderThresholds(g.thresholds)
+	const stats = statDisplay(g.attack, g.defence)
+
+	return (
+		<div
+			className='relative overflow-hidden rounded-3xl border border-slate-700/60 bg-gradient-to-b from-zinc-800 to-zinc-900 shadow-xl'
+			style={{width, aspectRatio: '395/546'}}
+		>
+			<div className='relative flex h-full w-full flex-col p-3'>
+				{/* Top bar: cost + thresholds (left), stats (right) */}
+				<div className='flex items-center justify-between'>
+					<div className='flex items-center gap-2'>
+						<span className='inline-flex items-center gap-1 rounded-full bg-black/50 px-2 py-1 font-semibold text-slate-100'>
+							<span className='tabular-nums'>{g.cost}</span>
+							{thresholdIcons && (
+								<span title='Thresholds'>{thresholdIcons}</span>
+							)}
+						</span>
+					</div>
+
+					{stats && (
+						<div className='rounded-full bg-black/60 px-3 py-1 font-bold text-slate-100 tabular-nums'>
+							{stats}
+						</div>
+					)}
+				</div>
+
+				{/* Title */}
+				<div className='mt-2 rounded-md bg-black/40 px-3 py-2 font-semibold text-lg text-slate-100 shadow-inner'>
+					{card.name}
+				</div>
+
+				{/* Spacer to mimic art space */}
+				<div className='flex-1' />
+
+				{/* Type line */}
+				<div className='rounded-md bg-black/50 px-3 py-1 font-medium text-slate-200/90 text-sm'>
+					{card.sets?.[0]?.variants?.[0]?.typeText ?? ''}
+				</div>
+
+				{/* Rules box */}
+				<div className='mt-2 rounded-xl border border-slate-600/50 bg-black/55 p-3'>
+					<p className='whitespace-pre-line text-slate-200/90 text-sm leading-snug'>
+						{g.rulesText}
+					</p>
+				</div>
+			</div>
+		</div>
+	)
+}
