@@ -40627,7 +40627,7 @@
       "rulesText": "Tap → Play or draw a site.\n\nBanish three magic spells in your cemetery → Cast a copy of one of them.",
       "cost": null,
       "attack": 1,
-      "defence": null,
+      "defence": 1,
       "life": 20,
       "thresholds": {
         "air": 0,

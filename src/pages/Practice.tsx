@@ -17,6 +17,8 @@ export function Practice() {
 	)
 	const card = useMemo<Card>(() => data[cardIndex] as Card, [data, cardIndex])
 	const allCardNames = useMemo<string[]>(() => data.map(c => c.name), [data])
+	const [streak, setStreak] = useState<number>(0)
+	const [roundEnded, setRoundEnded] = useState<boolean>(false)
 
 	function resetCard() {
 		if (data.length <= 1) {
@@ -28,6 +30,7 @@ export function Practice() {
 			next = (next + 1) % data.length
 		}
 		setCardIndex(next)
+		setRoundEnded(false)
 	}
 
 	return (
@@ -43,14 +46,31 @@ export function Practice() {
 						src='/logo.png'
 						width='420'
 					/>
-					<button
-						className='border border-slate-300 bg-white cursor-pointer px-4 py-2 text-sm font-semibold text-slate-900 shadow hover:bg-slate-100 active:bg-slate-200 rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400'
-						onClick={resetCard}
-						type='button'
-					>
-						Next Card
-					</button>
-					<GameBoard allCardNames={allCardNames} card={card} key={cardIndex} />
+					<div className='rounded-md bg-green-600/10 px-3 py-1 text-sm font-semibold text-green-200'>
+						Win streak: <span className='tabular-nums'>{streak}</span>
+					</div>
+					{roundEnded && (
+						<button
+							className='mt-1 border border-slate-300 bg-white cursor-pointer px-4 py-2 text-sm font-semibold text-slate-900 shadow hover:bg-slate-100 active:bg-slate-200 rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400'
+							onClick={resetCard}
+							type='button'
+						>
+							Next Card
+						</button>
+					)}
+					<GameBoard
+						allCardNames={allCardNames}
+						card={card}
+						key={cardIndex}
+						onLose={() => {
+							setStreak(0)
+							setRoundEnded(true)
+						}}
+						onWin={() => {
+							setStreak(prev => prev + 1)
+							setRoundEnded(true)
+						}}
+					/>
 				</div>
 			</div>
 		</>
