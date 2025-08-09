@@ -14,7 +14,15 @@ const RaritySchema = v.picklist([
   "Elite",
   "Unique",
 ] as const);
-const TypeSchema = v.picklist(["Minion", "Relic", "Site", "Magic"] as const);
+const TypeSchema = v.picklist([
+  "Minion",
+  "Relic",
+  "Site",
+  "Magic",
+  "Artifact",
+  "Aura",
+  "Avatar",
+] as const);
 
 /** Guardian/metadata block (same shape in both places) */
 const GuardianSchema = v.object({
@@ -62,6 +70,7 @@ export type Card = v.InferOutput<typeof CardSchema>;
 const Cards = v.array(CardSchema);
 
 export async function getCards() {
+  // Use a local path and rely on the dev server proxy to reach the public API
   const response = await fetch("/cards");
   if (!response.ok) {
     throw new Error("Failed to fetch");
