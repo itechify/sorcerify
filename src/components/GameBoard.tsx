@@ -65,15 +65,23 @@ export function GameBoard({card}: {card: Card}) {
 
 	const revealsAny = useCallback(
 		(normalized: string): boolean => {
-			// Threshold tokens: reveal if the card has any of that threshold
+			// Threshold tokens
 			if ((THRESHOLD_TOKENS as readonly string[]).includes(normalized)) {
 				const thresholds = card.guardian.thresholds as Record<
 					string,
 					number | undefined
 				>
-				return (thresholds[normalized] ?? 0) > 0
+				if ((thresholds[normalized] ?? 0) > 0) return true
+				const map: Record<string, string> = {
+					air: 'A',
+					earth: 'E',
+					fire: 'F',
+					water: 'W'
+				}
+				const code = map[normalized]
+				return new RegExp(`\\(${code}\\)`).test(card.guardian.rulesText)
 			}
-			// Otherwise, search text fields character-by-character
+			// Text fields
 			for (const text of searchableTexts) {
 				for (const ch of text) {
 					if (normalizeCharForGuessing(ch) === normalized) return true

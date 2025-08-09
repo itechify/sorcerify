@@ -49,6 +49,63 @@ function renderThresholdImages(
 	return <span className='inline-flex items-center gap-1'>{nodes}</span>
 }
 
+// Render rules text with inline threshold icons: (F)(A)(E)(W) -> images
+const CODE_TO_TOKEN = new Map<string, keyof Thresholds>([
+	['F', 'fire'],
+	['A', 'air'],
+	['E', 'earth'],
+	['W', 'water']
+])
+
+function renderRulesText(
+	text: string,
+	guessed: Set<string>,
+	revealAll: boolean
+): ReactNode {
+	const parts: ReactNode[] = []
+	const regex = /\(([FAEW])\)/g
+	let lastIndex = 0
+	let keyIndex = 0
+	const pushMasked = (chunk: string) => {
+		if (!chunk) return
+		parts.push(revealAll ? chunk : maskText(chunk, guessed))
+	}
+	for (const match of text.matchAll(regex)) {
+		const full = match[0]
+		const code = match[1] ?? ''
+		const start = match.index ?? 0
+		if (start > lastIndex) pushMasked(text.slice(lastIndex, start))
+		const token = CODE_TO_TOKEN.get(code)
+		if (token == null) {
+			pushMasked(full)
+		} else {
+			const narrowed = token as keyof Thresholds
+			const isRevealed = revealAll || guessed.has(narrowed)
+			parts.push(
+				<span
+					className='inline-flex items-center align-text-bottom'
+					key={`rt-${keyIndex++}`}
+				>
+					{isRevealed ? (
+						<img
+							alt={`${narrowed} icon`}
+							className='mx-[1px] h-4 w-4'
+							height={16}
+							src={THRESHOLD_ICON_SRC[narrowed]}
+							width={16}
+						/>
+					) : (
+						<span className='mx-[1px] inline-block h-4 w-4 rounded-sm bg-slate-200/30' />
+					)}
+				</span>
+			)
+		}
+		lastIndex = start + full.length
+	}
+	if (lastIndex < text.length) pushMasked(text.slice(lastIndex))
+	return parts
+}
+
 function statDisplay(attack: number | null, defence: number | null) {
 	if (attack == null && defence == null) return ''
 	if (attack === defence) return String(attack ?? defence ?? '')
@@ -130,7 +187,7 @@ export function SorceryCard({
 						</div>
 						<div className='mt-2 rounded-xl border border-slate-600/50 bg-black/55 px-3 py-2'>
 							<p className='whitespace-pre-line text-sm leading-snug tracking-wider text-slate-200/90'>
-								{show(g.rulesText)}
+								{renderRulesText(g.rulesText, guessed, revealAll)}
 							</p>
 						</div>
 					</>
