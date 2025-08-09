@@ -64,7 +64,9 @@ export function GameBoard({
 		}
 
 		const typeText = card.sets?.[0]?.variants?.[0]?.typeText ?? ''
-		return [String(g.cost), statsText, card.name, typeText, g.rulesText]
+		const leftTopText =
+			g.type === 'Avatar' ? String(g.life ?? '') : String(g.cost)
+		return [leftTopText, statsText, card.name, typeText, g.rulesText]
 	}, [card])
 
 	const revealsAny = useCallback(

@@ -177,6 +177,7 @@ export function SorceryCard({
 
 	const show = (text: string) => (revealAll ? text : maskText(text, guessed))
 	const isSite = g.type === 'Site'
+	const isAvatar = g.type === 'Avatar'
 
 	// Choose background image based on orientation
 	const backgroundImageUrl = isSite
@@ -232,25 +233,45 @@ export function SorceryCard({
 					</>
 				) : (
 					<>
-						{/* Top bar: cost + thresholds (left), stats (right) */}
+						{/* Top bar: cost+thresholds (left) or life for Avatars, stats (right) */}
 						<div className='flex items-center justify-between'>
 							<div className='flex items-center gap-2'>
-								<span className='inline-flex items-center gap-2 rounded-full bg-black px-2 py-1 font-semibold tracking-wider text-slate-100'>
+								{isAvatar ? (
 									<span
-										className='grid h-7 w-7 place-items-center rounded-full border border-slate-800/70 bg-slate-200 text-slate-900 tabular-nums text-sm shadow-inner'
-										title='Cost'
+										className='inline-flex items-center gap-2 rounded-full bg-black px-2 py-1 font-semibold tracking-wider text-slate-100'
+										title='Life'
 									>
-										{show(String(g.cost))}
-									</span>
-									{thresholdIcons && (
-										<span
-											className='inline-flex items-center'
-											title='Thresholds'
-										>
-											{thresholdIcons}
+										<span className='relative inline-block h-8 w-8'>
+											<img
+												alt='Life icon'
+												className='h-8 w-8 select-none'
+												height={32}
+												src='/icons/blood-drop.svg'
+												width={32}
+											/>
+											<span className='absolute inset-0 grid place-items-center text-sm font-bold text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]'>
+												{show(String(g.life ?? ''))}
+											</span>
 										</span>
-									)}
-								</span>
+									</span>
+								) : (
+									<span className='inline-flex items-center gap-2 rounded-full bg-black px-2 py-1 font-semibold tracking-wider text-slate-100'>
+										<span
+											className='grid h-7 w-7 place-items-center rounded-full border border-slate-800/70 bg-slate-200 text-slate-900 tabular-nums text-sm shadow-inner'
+											title='Cost'
+										>
+											{show(String(g.cost))}
+										</span>
+										{thresholdIcons && (
+											<span
+												className='inline-flex items-center'
+												title='Thresholds'
+											>
+												{thresholdIcons}
+											</span>
+										)}
+									</span>
+								)}
 							</div>
 
 							{stats && (
