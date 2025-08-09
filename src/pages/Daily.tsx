@@ -46,8 +46,15 @@ export function Daily() {
 		<>
 			<Head title={`Sorcerify — Daily (${todayKey})`} />
 			<NavBar />
-			<div className='m-2 grid min-h-[calc(100vh-56px)] place-content-center'>
-				<div className='flex flex-col items-center gap-3'>
+			<div className='m-2 grid min-h-[calc(100vh-56px)] content-start justify-items-center pt-4'>
+				<div className='flex flex-col items-center gap-2'>
+					<img
+						alt='Sorcerify'
+						className='h-auto max-w-full'
+						height='120'
+						src='/logo.png'
+						width='420'
+					/>
 					<p className='text-sm text-slate-600'>
 						Daily card for {todayKey} (UTC)
 					</p>

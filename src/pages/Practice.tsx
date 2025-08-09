@@ -34,8 +34,15 @@ export function Practice() {
 		<>
 			<Head title='Sorcerify — Practice' />
 			<NavBar />
-			<div className='m-2 grid min-h-[calc(100vh-56px)] place-content-center'>
-				<div className='flex flex-col items-center gap-4'>
+			<div className='m-2 grid min-h-[calc(100vh-56px)] content-start justify-items-center pt-4'>
+				<div className='flex flex-col items-center gap-3'>
+					<img
+						alt='Sorcerify'
+						className='h-auto max-w-full'
+						height='120'
+						src='/logo.png'
+						width='420'
+					/>
 					<button
 						className='border border-slate-300 bg-white cursor-pointer px-4 py-2 text-sm font-semibold text-slate-900 shadow hover:bg-slate-100 active:bg-slate-200 rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400'
 						onClick={resetCard}

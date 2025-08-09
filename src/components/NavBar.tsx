@@ -11,8 +11,18 @@ export function NavBar() {
 	return (
 		<header className='sticky top-0 z-10 border-b border-slate-200 bg-white/90 backdrop-blur'>
 			<div className='mx-auto flex max-w-5xl items-center justify-between px-4 py-3'>
-				<Link className='text-lg font-semibold text-slate-900' to='/daily'>
-					Sorcerify
+				<Link
+					className='flex items-center gap-2 text-lg font-semibold text-slate-900'
+					to='/daily'
+				>
+					<img
+						alt='Sorcerify'
+						className='h-8 w-8'
+						height='32'
+						src='/logo-small.png'
+						width='32'
+					/>
+					<span>Sorcerify</span>
 				</Link>
 				<nav className='flex items-center gap-2'>
 					<NavLink
