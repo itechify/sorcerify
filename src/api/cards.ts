@@ -12,7 +12,7 @@ const RaritySchema = v.picklist([
   "Ordinary",
   "Exceptional",
   "Elite",
-  "Legendary",
+  "Unique",
 ] as const);
 const TypeSchema = v.picklist(["Minion", "Relic", "Site", "Magic"] as const);
 
@@ -21,7 +21,7 @@ const GuardianSchema = v.object({
   rarity: RaritySchema,
   type: TypeSchema,
   rulesText: v.string(),
-  cost: v.number(),
+  cost: v.nullable(v.number()),
   attack: v.nullable(v.number()),
   defence: v.nullable(v.number()),
   life: v.nullable(v.number()),

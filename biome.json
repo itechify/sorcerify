@@ -65,7 +65,7 @@
 							}
 						},
 						"noExcessiveLinesPerFunction": "off",
-						"useSortedClasses": "warn"
+						"useSortedClasses": "off"
 					},
 					"suspicious": {
 						"noReactSpecificProps": "off"

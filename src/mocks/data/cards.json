@@ -294,5 +294,64 @@
         ]
       }
     ]
+  },
+  {
+    "name": "Fields of Camlann",
+    "guardian": {
+      "rarity": "Unique",
+      "type": "Site",
+      "rulesText": "(F)(F)(F) – Genesis → Each player chooses one of their minions. Kill the rest.",
+      "cost": null,
+      "attack": null,
+      "defence": null,
+      "life": null,
+      "thresholds": {
+        "air": 0,
+        "earth": 0,
+        "fire": 1,
+        "water": 0
+      }
+    },
+    "elements": "Fire",
+    "subTypes": "",
+    "sets": [
+      {
+        "name": "Arthurian Legends",
+        "releasedAt": "2024-10-04T00:00:00.000Z",
+        "metadata": {
+          "rarity": "Unique",
+          "type": "Site",
+          "rulesText": "(F)(F)(F) – Genesis → Each player chooses one of their minions. Kill the rest.",
+          "cost": null,
+          "attack": null,
+          "defence": null,
+          "life": null,
+          "thresholds": {
+            "air": 0,
+            "earth": 0,
+            "fire": 1,
+            "water": 0
+          }
+        },
+        "variants": [
+          {
+            "slug": "art_fields_of_camlann_b_s",
+            "finish": "Standard",
+            "product": "Booster",
+            "artist": "Vasiliy Ermolaev",
+            "flavorText": "",
+            "typeText": "A Unique Site where fates are sealed"
+          },
+          {
+            "slug": "art_fields_of_camlann_b_f",
+            "finish": "Foil",
+            "product": "Booster",
+            "artist": "Vasiliy Ermolaev",
+            "flavorText": "",
+            "typeText": "A Unique Site where fates are sealed"
+          }
+        ]
+      }
+    ]
   }
 ]
