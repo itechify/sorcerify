@@ -63,7 +63,9 @@ function renderRulesText(
 	revealAll: boolean
 ): ReactNode {
 	const parts: ReactNode[] = []
-	const regex = /\((?:([FAEW])|(\d+))\)/g
+	// Match (F|A|E|W), numeric costs like (1), and Unicode circled numbers ①..⑳
+	const regex = /\((?:([FAEW])|(\d+))\)|([\u2460-\u2473])/g
+	const circledDigitStart = 0x24_60
 	let cursor = 0
 	let keyIndex = 0
 
@@ -107,7 +109,12 @@ function renderRulesText(
 	}
 
 	for (const match of text.matchAll(regex)) {
-		const [full, code, num] = match
+		const [full, code, num, circled] = match as unknown as [
+			string,
+			string | undefined,
+			string | undefined,
+			string | undefined
+		]
 		const start = match.index ?? 0
 		pushMasked(text.slice(cursor, start))
 
@@ -116,6 +123,11 @@ function renderRulesText(
 			token ? pushToken(token) : pushMasked(full)
 		} else if (num) {
 			pushCost(num)
+		} else if (circled) {
+			// Convert Unicode circled digits ① (U+2460) .. ⑳ (U+2473) to plain numbers
+			const codePoint = circled.codePointAt(0) ?? 0
+			const valueNum = codePoint - circledDigitStart + 1
+			pushCost(String(valueNum))
 		} else {
 			pushMasked(full)
 		}
@@ -208,27 +220,29 @@ export function SorceryCard({
 					<>
 						{/* For Site cards (landscape) */}
 						<div className='flex-1' />
-						<div className='rounded-md bg-black px-3 py-1 text-sm font-medium text-slate-200/90'>
-							<div className='flex items-center justify-between gap-3'>
-								<span className='truncate'>
-									{show(
-										`${card.name} — ${card.sets?.[0]?.variants?.[0]?.typeText ?? ''}`
-									)}
-								</span>
-								{thresholdIcons && (
-									<span
-										className='rounded-md bg-black px-2 py-1 font-semibold tracking-wider text-slate-100 flex items-center'
-										title='Thresholds'
-									>
-										{thresholdIcons}
+						<div className='overflow-hidden rounded-xl border border-slate-600/50 bg-black'>
+							<div className='border-b border-slate-600/50 px-3 py-1 text-sm font-medium text-slate-200/90'>
+								<div className='flex items-center justify-between gap-3'>
+									<span className='truncate tracking-wider'>
+										{show(
+											`${card.name} — ${card.sets?.[0]?.variants?.[0]?.typeText ?? ''}`
+										)}
 									</span>
-								)}
+									{thresholdIcons && (
+										<span
+											className='flex items-center rounded-md bg-black px-2 py-1 font-semibold tracking-wider text-slate-100'
+											title='Thresholds'
+										>
+											{thresholdIcons}
+										</span>
+									)}
+								</div>
 							</div>
-						</div>
-						<div className='mt-2 rounded-xl border border-slate-600/50 bg-black px-3 py-2'>
-							<p className='whitespace-pre-line text-sm leading-snug tracking-wider text-slate-200/90'>
-								{renderRulesText(g.rulesText, guessed, revealAll)}
-							</p>
+							<div className='px-3 py-2'>
+								<p className='whitespace-pre-line text-sm leading-snug tracking-wider text-slate-200/90'>
+									{renderRulesText(g.rulesText, guessed, revealAll)}
+								</p>
+							</div>
 						</div>
 					</>
 				) : (
@@ -289,16 +303,16 @@ export function SorceryCard({
 						{/* Spacer to mimic art space */}
 						<div className='flex-1' />
 
-						{/* Type line */}
-						<div className='rounded-md bg-black px-3 py-1 text-sm font-medium tracking-wider text-slate-200/90'>
-							{show(card.sets?.[0]?.variants?.[0]?.typeText ?? '')}
-						</div>
-
-						{/* Rules box */}
-						<div className='mt-2 rounded-xl border border-slate-600/50 bg-black p-3'>
-							<p className='whitespace-pre-line text-sm leading-snug tracking-wider text-slate-200/90'>
-								{renderRulesText(g.rulesText, guessed, revealAll)}
-							</p>
+						{/* Bottom box: type header + rules together */}
+						<div className='mt-2 overflow-hidden rounded-xl border border-slate-600/50 bg-black'>
+							<div className='border-b border-slate-600/50 px-3 py-1 text-sm font-medium tracking-wider text-slate-200/90'>
+								{show(card.sets?.[0]?.variants?.[0]?.typeText ?? '')}
+							</div>
+							<div className='px-3 py-2'>
+								<p className='whitespace-pre-line text-sm leading-snug tracking-wider text-slate-200/90'>
+									{renderRulesText(g.rulesText, guessed, revealAll)}
+								</p>
+							</div>
 						</div>
 					</>
 				)}
