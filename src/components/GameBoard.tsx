@@ -96,6 +96,8 @@ export function GameBoard({
 		return new Set<string>(entry?.nameGuessed ?? [])
 	})()
 	const nameGuessedRef = useRef<Set<string>>(initialNameGuessed)
+	const [nameGuessed, setNameGuessed] =
+		useState<Set<string>>(initialNameGuessed)
 	const winReportedRef = useRef<boolean>(false)
 	const loseReportedRef = useRef<boolean>(false)
 	const id = useId()
@@ -199,6 +201,7 @@ export function GameBoard({
 			const already = nameGuessedRef.current.has(nameValue)
 			if (!already) {
 				nameGuessedRef.current.add(nameValue)
+				setNameGuessed(prev => new Set(prev).add(nameValue))
 				if (nameValue === card.name) {
 					setHasWon(true)
 				} else {
@@ -267,6 +270,11 @@ export function GameBoard({
 		() => allCardNames.map(n => ({value: n, label: n})),
 		[allCardNames]
 	)
+
+	// Filter out previously guessed names (removes incorrect guesses from dropdown)
+	const filteredNameOptions = useMemo(() => {
+		return nameOptions.filter(o => !nameGuessed.has(o.value))
+	}, [nameOptions, nameGuessed])
 
 	interface NameOption {
 		value: string
@@ -367,11 +375,12 @@ export function GameBoard({
 							const next = opt?.value ?? ''
 							setNameGuessSelection(next)
 						}}
-						options={nameOptions}
+						options={filteredNameOptions}
 						placeholder='Select a card name'
 						styles={selectStyles}
 						value={
-							nameOptions.find(o => o.value === nameGuessSelection) ?? null
+							filteredNameOptions.find(o => o.value === nameGuessSelection) ??
+							null
 						}
 					/>
 				</div>

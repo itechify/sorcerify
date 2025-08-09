@@ -134,9 +134,6 @@ export function Daily() {
 						onWin={handleWinToday}
 						persistKey={todayKey}
 					/>
-					<div className='text-sm text-slate-700'>
-						Streak: <span className='font-semibold'>{streak}</span>
-					</div>
 					<p className='text-xs text-slate-500'>
 						Come back tomorrow for a new daily card.
 					</p>
