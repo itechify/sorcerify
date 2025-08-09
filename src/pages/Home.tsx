@@ -15,6 +15,7 @@ export function Home() {
 		Math.floor(Math.random() * data.length)
 	)
 	const card = useMemo<Card>(() => data[cardIndex] as Card, [data, cardIndex])
+	const allCardNames = useMemo<string[]>(() => data.map(c => c.name), [data])
 
 	function resetCard() {
 		if (data.length <= 1) {
@@ -41,7 +42,11 @@ export function Home() {
 						>
 							Reset
 						</button>
-						<GameBoard card={card} key={cardIndex} />
+						<GameBoard
+							allCardNames={allCardNames}
+							card={card}
+							key={cardIndex}
+						/>
 					</div>
 				)}
 			</div>
