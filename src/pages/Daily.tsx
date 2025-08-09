@@ -1,5 +1,5 @@
 import {useSuspenseQuery} from '@tanstack/react-query'
-import {useMemo} from 'react'
+import {useEffect, useMemo, useState} from 'react'
 import {type Card, getCards} from '@/api/cards'
 import {GameBoard} from '@/components/GameBoard'
 import {Head} from '@/components/Head'
@@ -42,6 +42,74 @@ export function Daily() {
 	const card = useMemo<Card>(() => data[cardIndex] as Card, [data, cardIndex])
 	const allCardNames = useMemo<string[]>(() => data.map(c => c.name), [data])
 
+	// Streak management
+	const [streak, setStreak] = useState<number>(() => {
+		try {
+			const raw = localStorage.getItem('sorcerify:streak')
+			return raw ? Number(raw) || 0 : 0
+		} catch {
+			return 0
+		}
+	})
+	const [lastWinDate, setLastWinDate] = useState<string | null>(() => {
+		try {
+			return localStorage.getItem('sorcerify:lastWinDate')
+		} catch {
+			return null
+		}
+	})
+
+	useEffect(() => {
+		try {
+			localStorage.setItem('sorcerify:streak', String(streak))
+			if (lastWinDate != null) {
+				localStorage.setItem('sorcerify:lastWinDate', lastWinDate)
+			}
+		} catch {
+			// ignore
+		}
+	}, [streak, lastWinDate])
+
+	function handleWinToday() {
+		// If already recorded win for today, do nothing
+		if (lastWinDate === todayKey) return
+		// If last win was yesterday (UTC), increment, else reset to 1
+		const yesterday = (() => {
+			const d = new Date()
+			// derive yesterday in UTC by subtracting one day and then formatting UTC
+			d.setUTCDate(d.getUTCDate() - 1)
+			return formatUtcDateKey(d)
+		})()
+		const nextStreak = lastWinDate === yesterday ? streak + 1 : 1
+		setStreak(nextStreak)
+		setLastWinDate(todayKey)
+		// Broadcast streak change for listeners (e.g., NavBar)
+		try {
+			window.dispatchEvent(
+				new CustomEvent('sorcerify:streak-updated', {
+					detail: {streak: nextStreak, lastWinDate: todayKey}
+				})
+			)
+		} catch {
+			// ignore
+		}
+	}
+
+	function handleLoseToday() {
+		// Only reset if we haven't already recorded a result for today
+		if (lastWinDate === todayKey) return
+		setStreak(0)
+		try {
+			window.dispatchEvent(
+				new CustomEvent('sorcerify:streak-updated', {
+					detail: {streak: 0, lastWinDate}
+				})
+			)
+		} catch {
+			// ignore
+		}
+	}
+
 	return (
 		<>
 			<Head title={`Sorcerify — Daily (${todayKey})`} />
@@ -58,7 +126,17 @@ export function Daily() {
 					<p className='text-sm text-slate-600'>
 						Daily card for {todayKey} (UTC)
 					</p>
-					<GameBoard allCardNames={allCardNames} card={card} key={todayKey} />
+					<GameBoard
+						allCardNames={allCardNames}
+						card={card}
+						key={todayKey}
+						onLose={handleLoseToday}
+						onWin={handleWinToday}
+						persistKey={todayKey}
+					/>
+					<div className='text-sm text-slate-700'>
+						Streak: <span className='font-semibold'>{streak}</span>
+					</div>
 					<p className='text-xs text-slate-500'>
 						Come back tomorrow for a new daily card.
 					</p>

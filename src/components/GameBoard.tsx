@@ -27,22 +27,77 @@ function isTypingInInput(target: HTMLElement | null): boolean {
 
 export function GameBoard({
 	card,
-	allCardNames
+	allCardNames,
+	persistKey,
+	onWin,
+	onLose
 }: {
 	card: Card
 	allCardNames: string[]
+	persistKey?: string
+	onWin?: () => void
+	onLose?: () => void
 }) {
-	const [guessed, setGuessed] = useState<Set<string>>(() => new Set())
-	const [correct, setCorrect] = useState<Set<string>>(() => new Set())
-	const [incorrect, setIncorrect] = useState<Set<string>>(() => new Set())
-	const [remaining, setRemaining] = useState<number>(7)
-	const [hasWon, setHasWon] = useState<boolean>(false)
-	const [nameGuessSelection, setNameGuessSelection] = useState<string>('')
+	// Centralized storage key; each game's state is stored under a sub-key
+	const centralStorageKey = 'sorcerify:progress'
+
+	interface PersistedState {
+		guessed: string[]
+		correct: string[]
+		incorrect: string[]
+		remaining: number
+		hasWon: boolean
+		nameGuessed?: string[]
+		nameGuessSelection?: string
+	}
+
+	function readCentralEntry(): PersistedState | null {
+		if (!persistKey) return null
+		try {
+			const raw = localStorage.getItem(centralStorageKey)
+			if (!raw) return null
+			const map = JSON.parse(raw) as Record<string, PersistedState | undefined>
+			return map[persistKey] ?? null
+		} catch {
+			return null
+		}
+	}
+
+	const [guessed, setGuessed] = useState<Set<string>>(() => {
+		const entry = readCentralEntry()
+		return new Set(entry?.guessed ?? [])
+	})
+	const [correct, setCorrect] = useState<Set<string>>(() => {
+		const entry = readCentralEntry()
+		return new Set(entry?.correct ?? [])
+	})
+	const [incorrect, setIncorrect] = useState<Set<string>>(() => {
+		const entry = readCentralEntry()
+		return new Set(entry?.incorrect ?? [])
+	})
+	const [remaining, setRemaining] = useState<number>(() => {
+		const entry = readCentralEntry()
+		return typeof entry?.remaining === 'number' ? entry.remaining : 7
+	})
+	const [hasWon, setHasWon] = useState<boolean>(() => {
+		const entry = readCentralEntry()
+		return Boolean(entry?.hasWon)
+	})
+	const [nameGuessSelection, setNameGuessSelection] = useState<string>(() => {
+		const entry = readCentralEntry()
+		return entry?.nameGuessSelection ?? ''
+	})
 	const [nameGuessStatus, setNameGuessStatus] = useState<'incorrect' | null>(
 		null
 	)
 	const nameGuessStatusTimeoutRef = useRef<number | null>(null)
-	const nameGuessedRef = useRef<Set<string>>(new Set())
+	const initialNameGuessed = (() => {
+		const entry = readCentralEntry()
+		return new Set<string>(entry?.nameGuessed ?? [])
+	})()
+	const nameGuessedRef = useRef<Set<string>>(initialNameGuessed)
+	const winReportedRef = useRef<boolean>(false)
+	const loseReportedRef = useRef<boolean>(false)
 	const id = useId()
 	// removed maskable token set; masking of fields is handled inside card rendering
 
@@ -161,6 +216,52 @@ export function GameBoard({
 		},
 		[card.name, hasWon, remaining]
 	)
+
+	// Persist state to centralized localStorage map whenever it changes
+	useEffect(() => {
+		if (!persistKey) return
+		const toPersist: PersistedState = {
+			guessed: Array.from(guessed),
+			correct: Array.from(correct),
+			incorrect: Array.from(incorrect),
+			remaining,
+			hasWon,
+			nameGuessed: Array.from(nameGuessedRef.current),
+			nameGuessSelection
+		}
+		try {
+			const raw = localStorage.getItem(centralStorageKey)
+			const map = raw
+				? (JSON.parse(raw) as Record<string, PersistedState | undefined>)
+				: {}
+			map[persistKey] = toPersist
+			localStorage.setItem(centralStorageKey, JSON.stringify(map))
+		} catch {
+			// ignore quota or serialization errors
+		}
+	}, [
+		persistKey,
+		guessed,
+		correct,
+		incorrect,
+		remaining,
+		hasWon,
+		nameGuessSelection
+	])
+
+	// Fire onWin once when winning state is reached
+	useEffect(() => {
+		if (!hasWon || winReportedRef.current) return
+		winReportedRef.current = true
+		onWin?.()
+	}, [hasWon, onWin])
+
+	// Fire onLose once when losing state is reached
+	useEffect(() => {
+		if (!hasLost || loseReportedRef.current) return
+		loseReportedRef.current = true
+		onLose?.()
+	}, [hasLost, onLose])
 
 	const nameOptions = useMemo(
 		() => allCardNames.map(n => ({value: n, label: n})),

@@ -1,6 +1,53 @@
+import {useEffect, useState} from 'react'
 import {Link, NavLink} from 'react-router'
 
 export function NavBar() {
+	const [streak, setStreak] = useState<number>(() => {
+		try {
+			const raw = localStorage.getItem('sorcerify:streak')
+			return raw ? Number(raw) || 0 : 0
+		} catch {
+			return 0
+		}
+	})
+
+	useEffect(() => {
+		function onCustomUpdate(e: Event) {
+			const detail = (e as CustomEvent).detail as {streak?: number} | undefined
+			if (detail && typeof detail.streak === 'number') {
+				setStreak(detail.streak)
+			} else {
+				// fallback read
+				try {
+					const raw = localStorage.getItem('sorcerify:streak')
+					setStreak(raw ? Number(raw) || 0 : 0)
+				} catch {
+					setStreak(0)
+				}
+			}
+		}
+		function onStorage() {
+			try {
+				const raw = localStorage.getItem('sorcerify:streak')
+				setStreak(raw ? Number(raw) || 0 : 0)
+			} catch {
+				setStreak(0)
+			}
+		}
+		window.addEventListener(
+			'sorcerify:streak-updated',
+			onCustomUpdate as EventListener
+		)
+		window.addEventListener('storage', onStorage)
+		return () => {
+			window.removeEventListener(
+				'sorcerify:streak-updated',
+				onCustomUpdate as EventListener
+			)
+			window.removeEventListener('storage', onStorage)
+		}
+	}, [])
+
 	function navLinkClass(isActive: boolean): string {
 		const base = 'px-3 py-1.5 text-sm font-medium rounded-md'
 		const active = 'bg-slate-900 text-white'
@@ -37,6 +84,9 @@ export function NavBar() {
 					>
 						Practice
 					</NavLink>
+					<span className='ml-2 rounded-md bg-slate-900 px-2 py-1 text-xs font-semibold text-white'>
+						Daily Streak: <span className='tabular-nums'>{streak}</span>
+					</span>
 				</nav>
 			</div>
 		</header>
