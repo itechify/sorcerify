@@ -11,6 +11,7 @@ const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 const DIGITS = '0123456789'.split('')
 const EMOJIS = ['💨', '⛰️', '🔥', '💧']
 const LETTER_RE = /[a-zA-Z]/
+const VS_REGEX = /\uFE0E|\uFE0F/g
 
 export function Keyboard({
 	correct,
@@ -27,7 +28,9 @@ export function Keyboard({
 	return (
 		<div className='flex max-w-[740px] flex-wrap justify-center gap-2 px-2'>
 			{keys.map(k => {
-				const normalized = LETTER_RE.test(k) ? k.toLowerCase() : k
+				const normalized = LETTER_RE.test(k)
+					? k.toLowerCase()
+					: k.replace(VS_REGEX, '')
 				const isIncorrect = incorrectSet.has(normalized)
 				const isCorrect = correctSet.has(normalized)
 				const isUsed = isIncorrect || isCorrect

@@ -4,6 +4,7 @@ import {Keyboard} from '@/components/Keyboard'
 import {SorceryCard} from '@/components/SorceryCard'
 
 // Top-level constants for performance (linter preference)
+// Normalize threshold emojis by stripping variation selectors; allow both forms from UI
 const THRESHOLD_EMOJIS = ['💨', '⛰️', '🔥', '💧']
 const THRESHOLD_EMOJI_MAP = {
 	air: '💨',
@@ -12,6 +13,7 @@ const THRESHOLD_EMOJI_MAP = {
 	water: '💧'
 } as const
 const LETTER_RE = /[a-zA-Z]/
+const VS_REGEX = /\uFE0E|\uFE0F/g
 const ALNUM_RE = /[a-zA-Z0-9]/
 const SINGLE_ALNUM_RE = /^[a-zA-Z0-9]$/
 
@@ -24,12 +26,12 @@ export function GameBoard({card}: {card: Card}) {
 
 	const normalizeCharForGuessing = useCallback((char: string): string => {
 		if (LETTER_RE.test(char)) return char.toLowerCase()
-		return char
+		return char.replace(VS_REGEX, '')
 	}, [])
 
 	const isMaskableChar = useCallback(
 		(char: string): boolean =>
-			ALNUM_RE.test(char) || maskableEmojiSet.has(char),
+			ALNUM_RE.test(char) || maskableEmojiSet.has(char.replace(VS_REGEX, '')),
 		[maskableEmojiSet]
 	)
 
