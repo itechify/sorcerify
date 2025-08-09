@@ -63,7 +63,8 @@
 							"options": {
 								"entropyThreshold": 100
 							}
-						}
+						},
+						"noExcessiveLinesPerFunction": "off"
 					},
 					"suspicious": {
 						"noReactSpecificProps": "off"

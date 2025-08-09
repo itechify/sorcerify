@@ -1,7 +1,8 @@
 import {useSuspenseQuery} from '@tanstack/react-query'
-import {getCards} from '@/api/cards'
+import {useMemo, useState} from 'react'
+import {type Card, getCards} from '@/api/cards'
+import {GameBoard} from '@/components/GameBoard'
 import {Head} from '@/components/Head'
-import {SorceryCard} from '@/components/SorceryCard'
 
 export function Home() {
 	const {data} = useSuspenseQuery({
@@ -9,19 +10,17 @@ export function Home() {
 		queryKey: ['cards']
 	})
 
-	// pick one random card from the array
-	const randomCard = data[Math.floor(Math.random() * data.length)]
+	// Pick one random card once per mount
+	const [cardIndex] = useState<number>(() =>
+		Math.floor(Math.random() * data.length)
+	)
+	const card = useMemo<Card>(() => data[cardIndex] as Card, [data, cardIndex])
 
 	return (
 		<>
 			<Head title='Sorcerify' />
 			<div className='m-2 grid min-h-screen place-content-center'>
-				{randomCard && (
-					<SorceryCard
-						card={randomCard}
-						key={`Card-${randomCard.name}-${Math.random()}`}
-					/>
-				)}
+				{card && <GameBoard card={card} />}
 			</div>
 		</>
 	)
