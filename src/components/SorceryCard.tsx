@@ -63,46 +63,66 @@ function renderRulesText(
 	revealAll: boolean
 ): ReactNode {
 	const parts: ReactNode[] = []
-	const regex = /\(([FAEW])\)/g
-	let lastIndex = 0
+	const regex = /\((?:([FAEW])|(\d+))\)/g
+	let cursor = 0
 	let keyIndex = 0
+
 	const pushMasked = (chunk: string) => {
-		if (!chunk) return
-		parts.push(revealAll ? chunk : maskText(chunk, guessed))
+		if (chunk) parts.push(revealAll ? chunk : maskText(chunk, guessed))
 	}
+
+	const pushToken = (token: keyof Thresholds) => {
+		const isRevealed = revealAll || guessed.has(token)
+		parts.push(
+			<span
+				className='inline-flex items-center align-text-bottom'
+				key={`rt-${keyIndex++}`}
+			>
+				{isRevealed ? (
+					<img
+						alt={`${token} icon`}
+						className='mx-[1px] h-4 w-4'
+						height={16}
+						src={THRESHOLD_ICON_SRC[token]}
+						width={16}
+					/>
+				) : (
+					<span className='mx-[1px] inline-block h-4 w-4 rounded-sm bg-slate-200/30' />
+				)}
+			</span>
+		)
+	}
+
+	const pushCost = (num: string) => {
+		const isRevealed = revealAll || guessed.has(num)
+		const content = isRevealed ? num : '_'
+		parts.push(
+			<span
+				className='ml-[2px] mr-[3px] inline-grid h-5 w-5 place-items-center rounded-full border border-slate-800/70 bg-slate-200 text-slate-900 tabular-nums text-[11px] leading-none shadow-inner align-text-bottom'
+				key={`rc-${keyIndex++}`}
+			>
+				{content}
+			</span>
+		)
+	}
+
 	for (const match of text.matchAll(regex)) {
-		const full = match[0]
-		const code = match[1] ?? ''
+		const [full, code, num] = match
 		const start = match.index ?? 0
-		if (start > lastIndex) pushMasked(text.slice(lastIndex, start))
-		const token = CODE_TO_TOKEN.get(code)
-		if (token == null) {
-			pushMasked(full)
+		pushMasked(text.slice(cursor, start))
+
+		if (code) {
+			const token = CODE_TO_TOKEN.get(code)
+			token ? pushToken(token) : pushMasked(full)
+		} else if (num) {
+			pushCost(num)
 		} else {
-			const narrowed = token as keyof Thresholds
-			const isRevealed = revealAll || guessed.has(narrowed)
-			parts.push(
-				<span
-					className='inline-flex items-center align-text-bottom'
-					key={`rt-${keyIndex++}`}
-				>
-					{isRevealed ? (
-						<img
-							alt={`${narrowed} icon`}
-							className='mx-[1px] h-4 w-4'
-							height={16}
-							src={THRESHOLD_ICON_SRC[narrowed]}
-							width={16}
-						/>
-					) : (
-						<span className='mx-[1px] inline-block h-4 w-4 rounded-sm bg-slate-200/30' />
-					)}
-				</span>
-			)
+			pushMasked(full)
 		}
-		lastIndex = start + full.length
+		cursor = start + full.length
 	}
-	if (lastIndex < text.length) pushMasked(text.slice(lastIndex))
+
+	pushMasked(text.slice(cursor))
 	return parts
 }
 
@@ -237,7 +257,7 @@ export function SorceryCard({
 						{/* Rules box */}
 						<div className='mt-2 rounded-xl border border-slate-600/50 bg-black/55 p-3'>
 							<p className='whitespace-pre-line text-sm leading-snug tracking-wider text-slate-200/90'>
-								{show(g.rulesText)}
+								{renderRulesText(g.rulesText, guessed, revealAll)}
 							</p>
 						</div>
 					</>

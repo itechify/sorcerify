@@ -457,5 +457,64 @@
         ]
       }
     ]
+  },
+  {
+    "name": "Field Laborers",
+    "guardian": {
+      "rarity": "Ordinary",
+      "type": "Minion",
+      "rulesText": "Tap → Gain (2) this turn.",
+      "cost": 3,
+      "attack": 2,
+      "defence": 2,
+      "life": null,
+      "thresholds": {
+        "air": 0,
+        "earth": 2,
+        "fire": 0,
+        "water": 0
+      }
+    },
+    "elements": "Earth",
+    "subTypes": "Mortal",
+    "sets": [
+      {
+        "name": "Arthurian Legends",
+        "releasedAt": "2024-10-04T00:00:00.000Z",
+        "metadata": {
+          "rarity": "Ordinary",
+          "type": "Minion",
+          "rulesText": "Tap → Gain (2) this turn.",
+          "cost": 3,
+          "attack": 2,
+          "defence": 2,
+          "life": null,
+          "thresholds": {
+            "air": 0,
+            "earth": 2,
+            "fire": 0,
+            "water": 0
+          }
+        },
+        "variants": [
+          {
+            "slug": "art_field_laborers_b_s",
+            "finish": "Standard",
+            "product": "Booster",
+            "artist": "Andrea Modesti",
+            "flavorText": "",
+            "typeText": "Ordinary Mortals bring in the harvest"
+          },
+          {
+            "slug": "art_field_laborers_b_f",
+            "finish": "Foil",
+            "product": "Booster",
+            "artist": "Andrea Modesti",
+            "flavorText": "",
+            "typeText": "Ordinary Mortals bring in the harvest"
+          }
+        ]
+      }
+    ]
   }
 ]
