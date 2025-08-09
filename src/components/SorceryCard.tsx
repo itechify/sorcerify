@@ -1,22 +1,52 @@
+import type {ReactNode} from 'react'
 import type {Card} from '@/api/cards'
 
 /** ===== Helpers ===== */
 type Thresholds = Card['guardian']['thresholds']
 
-const THRESHOLD_EMOJI: Record<keyof Thresholds, string> = {
-	air: '💨',
-	earth: '⛰️',
-	fire: '🔥',
-	water: '💧'
+// Internal threshold keys used for guessing and masking
+const THRESHOLD_KEYS = ['air', 'earth', 'fire', 'water'] as const
+
+// Image sources for thresholds (served from /public)
+const THRESHOLD_ICON_SRC: Record<keyof Thresholds, string> = {
+	air: '/threshold-icons/wind.png',
+	earth: '/threshold-icons/earth.png',
+	fire: '/threshold-icons/fire.png',
+	water: '/threshold-icons/water.png'
 }
 
-function renderThresholds(t: Thresholds) {
-	const parts: string[] = []
+// Render thresholds as images; reveal is controlled by guessed/revealAll
+function renderThresholdImages(
+	t: Thresholds,
+	guessed: Set<string>,
+	revealAll: boolean
+) {
+	const nodes: ReactNode[] = []
 	for (const k of Object.keys(t) as (keyof Thresholds)[]) {
-		const n = t[k] ?? 0
-		if (n > 0) parts.push(THRESHOLD_EMOJI[k].repeat(n))
+		const count = t[k] ?? 0
+		if (count <= 0) continue
+		const token = k
+		for (let i = 0; i < count; i++) {
+			const showIcon = revealAll || guessed.has(token)
+			nodes.push(
+				<span className='inline-flex items-center' key={`${k}-${i}`}>
+					{showIcon ? (
+						<img
+							alt={`${k} threshold`}
+							className='h-4 w-4'
+							height={16}
+							src={THRESHOLD_ICON_SRC[k]}
+							width={16}
+						/>
+					) : (
+						<span className='inline-block h-4 w-4 rounded-sm bg-slate-200/30' />
+					)}
+				</span>
+			)
+		}
 	}
-	return parts.join('')
+	if (nodes.length === 0) return null
+	return <span className='inline-flex items-center gap-1'>{nodes}</span>
 }
 
 function statDisplay(attack: number | null, defence: number | null) {
@@ -26,22 +56,18 @@ function statDisplay(attack: number | null, defence: number | null) {
 }
 
 /** ===== Masking (hangman) helpers ===== */
-const VS_REGEX = /\uFE0E|\uFE0F/g
-const MASKABLE_EMOJIS = new Set(
-	Object.values(THRESHOLD_EMOJI).map(e => e.replace(VS_REGEX, ''))
-)
+const MASKABLE_TOKENS = new Set<string>(THRESHOLD_KEYS)
 const LETTER_RE = /[a-zA-Z]/
 const ALNUM_RE = /[a-zA-Z0-9]/
 
 function normalizeCharForGuessing(char: string): string {
-	// Case-insensitive for letters; strip emoji variation selectors for others
+	// Case-insensitive for letters; pass-through for tokens
 	if (LETTER_RE.test(char)) return char.toLowerCase()
-	return char.replace(VS_REGEX, '')
+	return char
 }
 
 function isMaskableChar(char: string): boolean {
-	const normalized = char.replace(VS_REGEX, '')
-	return ALNUM_RE.test(char) || MASKABLE_EMOJIS.has(normalized)
+	return ALNUM_RE.test(char) || MASKABLE_TOKENS.has(char)
 }
 
 function maskText(text: string, guessed: Set<string>): string {
@@ -69,7 +95,7 @@ export function SorceryCard({
 	revealAll?: boolean
 }) {
 	const g = card.guardian
-	const thresholdIcons = renderThresholds(g.thresholds)
+	const thresholdIcons = renderThresholdImages(g.thresholds, guessed, revealAll)
 	const stats = statDisplay(g.attack, g.defence)
 
 	const show = (text: string) => (revealAll ? text : maskText(text, guessed))
@@ -94,10 +120,10 @@ export function SorceryCard({
 								</span>
 								{thresholdIcons && (
 									<span
-										className='rounded-md bg-black/40 px-2 py-1 font-semibold tracking-wider text-slate-100'
+										className='rounded-md bg-black/40 px-2 py-1 font-semibold tracking-wider text-slate-100 flex items-center'
 										title='Thresholds'
 									>
-										{show(thresholdIcons)}
+										{thresholdIcons}
 									</span>
 								)}
 							</div>
@@ -113,10 +139,20 @@ export function SorceryCard({
 						{/* Top bar: cost + thresholds (left), stats (right) */}
 						<div className='flex items-center justify-between'>
 							<div className='flex items-center gap-2'>
-								<span className='inline-flex items-center gap-1 rounded-full bg-black/50 px-2 py-1 font-semibold tracking-wider text-slate-100'>
-									<span className='tabular-nums'>{show(String(g.cost))}</span>
+								<span className='inline-flex items-center gap-2 rounded-full bg-black/50 px-2 py-1 font-semibold tracking-wider text-slate-100'>
+									<span
+										className='grid h-7 w-7 place-items-center rounded-full border border-slate-800/70 bg-slate-200 text-slate-900 tabular-nums text-sm shadow-inner'
+										title='Cost'
+									>
+										{show(String(g.cost))}
+									</span>
 									{thresholdIcons && (
-										<span title='Thresholds'>{show(thresholdIcons)}</span>
+										<span
+											className='inline-flex items-center'
+											title='Thresholds'
+										>
+											{thresholdIcons}
+										</span>
 									)}
 								</span>
 							</div>

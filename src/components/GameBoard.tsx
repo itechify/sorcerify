@@ -4,16 +4,9 @@ import {Keyboard} from '@/components/Keyboard'
 import {SorceryCard} from '@/components/SorceryCard'
 
 // Top-level constants for performance (linter preference)
-// Normalize threshold emojis by stripping variation selectors; allow both forms from UI
-const THRESHOLD_EMOJIS = ['💨', '⛰️', '🔥', '💧']
-const THRESHOLD_EMOJI_MAP = {
-	air: '💨',
-	earth: '⛰️',
-	fire: '🔥',
-	water: '💧'
-} as const
+// Threshold tokens (no emojis) used for guessing/searching
+const THRESHOLD_TOKENS = ['air', 'earth', 'fire', 'water'] as const
 const LETTER_RE = /[a-zA-Z]/
-const VS_REGEX = /\uFE0E|\uFE0F/g
 const ALNUM_RE = /[a-zA-Z0-9]/
 const SINGLE_ALNUM_RE = /^[a-zA-Z0-9]$/
 
@@ -22,17 +15,17 @@ export function GameBoard({card}: {card: Card}) {
 	const [correct, setCorrect] = useState<Set<string>>(() => new Set())
 	const [incorrect, setIncorrect] = useState<Set<string>>(() => new Set())
 	const [remaining, setRemaining] = useState<number>(5)
-	const maskableEmojiSet = useMemo(() => new Set(THRESHOLD_EMOJIS), [])
+	const maskableTokenSet = useMemo(() => new Set<string>(THRESHOLD_TOKENS), [])
 
 	const normalizeCharForGuessing = useCallback((char: string): string => {
 		if (LETTER_RE.test(char)) return char.toLowerCase()
-		return char.replace(VS_REGEX, '')
+		return char
 	}, [])
 
 	const isMaskableChar = useCallback(
 		(char: string): boolean =>
-			ALNUM_RE.test(char) || maskableEmojiSet.has(char.replace(VS_REGEX, '')),
-		[maskableEmojiSet]
+			ALNUM_RE.test(char) || maskableTokenSet.has(char),
+		[maskableTokenSet]
 	)
 
 	const maskText = useCallback(
@@ -55,15 +48,9 @@ export function GameBoard({card}: {card: Card}) {
 		() => maskText(card.name, guessed) === card.name,
 		[card.name, guessed, maskText]
 	)
-	// Determine if a guess reveals anything anywhere on the card
+	// Determine if a guess reveals anything anywhere on the card (text fields only)
 	const searchableTexts = useMemo(() => {
 		const g = card.guardian
-		const thresholdsText = (
-			Object.keys(g.thresholds) as (keyof typeof THRESHOLD_EMOJI_MAP)[]
-		)
-			.map(key => THRESHOLD_EMOJI_MAP[key].repeat(g.thresholds[key] ?? 0))
-			.join('')
-
 		let statsText = ''
 		const attack = g.attack
 		const defence = g.defence
@@ -73,18 +60,20 @@ export function GameBoard({card}: {card: Card}) {
 		}
 
 		const typeText = card.sets?.[0]?.variants?.[0]?.typeText ?? ''
-		return [
-			String(g.cost),
-			thresholdsText,
-			statsText,
-			card.name,
-			typeText,
-			g.rulesText
-		]
+		return [String(g.cost), statsText, card.name, typeText, g.rulesText]
 	}, [card])
 
 	const revealsAny = useCallback(
 		(normalized: string): boolean => {
+			// Threshold tokens: reveal if the card has any of that threshold
+			if ((THRESHOLD_TOKENS as readonly string[]).includes(normalized)) {
+				const thresholds = card.guardian.thresholds as Record<
+					string,
+					number | undefined
+				>
+				return (thresholds[normalized] ?? 0) > 0
+			}
+			// Otherwise, search text fields character-by-character
 			for (const text of searchableTexts) {
 				for (const ch of text) {
 					if (normalizeCharForGuessing(ch) === normalized) return true
@@ -92,7 +81,7 @@ export function GameBoard({card}: {card: Card}) {
 			}
 			return false
 		},
-		[normalizeCharForGuessing, searchableTexts]
+		[card.guardian, normalizeCharForGuessing, searchableTexts]
 	)
 	const hasLost = remaining <= 0 && !hasWon
 
