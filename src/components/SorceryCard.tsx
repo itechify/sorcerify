@@ -1,4 +1,4 @@
-import type {ReactNode} from 'react'
+import type {CSSProperties, ReactNode} from 'react'
 import type {Card} from '@/api/cards'
 
 /** ===== Helpers ===== */
@@ -178,17 +178,36 @@ export function SorceryCard({
 	const show = (text: string) => (revealAll ? text : maskText(text, guessed))
 	const isSite = g.type === 'Site'
 
+	// Choose background image based on orientation
+	const backgroundImageUrl = isSite
+		? '/card-placeholders/AtlasBack.png'
+		: '/card-placeholders/SpellbookBack.png'
+
+	// Unified container sizing and a dark overlay for readability
+	const cardDimensions = isSite
+		? {width: 531, height: 380}
+		: {width: 395, height: 546}
+
+	const containerStyle: CSSProperties = {
+		...cardDimensions,
+		backgroundImage: `linear-gradient(to bottom, rgba(9, 13, 23, 0.72), rgba(9, 13, 23, 0.78)), url(${backgroundImageUrl})`,
+		backgroundSize: 'cover',
+		backgroundPosition: 'center',
+		backgroundRepeat: 'no-repeat',
+		backgroundColor: '#0b1220'
+	}
+
 	return (
 		<div
-			className='relative overflow-hidden rounded-3xl border border-slate-700/60 bg-gradient-to-b from-zinc-800 to-zinc-900 shadow-xl'
-			style={isSite ? {width: 531, height: 380} : {width: 395, height: 546}}
+			className='relative overflow-hidden rounded-3xl border border-slate-700/60 shadow-xl'
+			style={containerStyle}
 		>
 			<div className='relative flex h-full w-full flex-col p-3'>
 				{isSite ? (
 					<>
 						{/* For Site cards (landscape) */}
 						<div className='flex-1' />
-						<div className='rounded-md bg-black/50 px-3 py-1 text-sm font-medium text-slate-200/90'>
+						<div className='rounded-md bg-black px-3 py-1 text-sm font-medium text-slate-200/90'>
 							<div className='flex items-center justify-between gap-3'>
 								<span className='truncate'>
 									{show(
@@ -197,7 +216,7 @@ export function SorceryCard({
 								</span>
 								{thresholdIcons && (
 									<span
-										className='rounded-md bg-black/40 px-2 py-1 font-semibold tracking-wider text-slate-100 flex items-center'
+										className='rounded-md bg-black px-2 py-1 font-semibold tracking-wider text-slate-100 flex items-center'
 										title='Thresholds'
 									>
 										{thresholdIcons}
@@ -205,7 +224,7 @@ export function SorceryCard({
 								)}
 							</div>
 						</div>
-						<div className='mt-2 rounded-xl border border-slate-600/50 bg-black/55 px-3 py-2'>
+						<div className='mt-2 rounded-xl border border-slate-600/50 bg-black px-3 py-2'>
 							<p className='whitespace-pre-line text-sm leading-snug tracking-wider text-slate-200/90'>
 								{renderRulesText(g.rulesText, guessed, revealAll)}
 							</p>
@@ -216,7 +235,7 @@ export function SorceryCard({
 						{/* Top bar: cost + thresholds (left), stats (right) */}
 						<div className='flex items-center justify-between'>
 							<div className='flex items-center gap-2'>
-								<span className='inline-flex items-center gap-2 rounded-full bg-black/50 px-2 py-1 font-semibold tracking-wider text-slate-100'>
+								<span className='inline-flex items-center gap-2 rounded-full bg-black px-2 py-1 font-semibold tracking-wider text-slate-100'>
 									<span
 										className='grid h-7 w-7 place-items-center rounded-full border border-slate-800/70 bg-slate-200 text-slate-900 tabular-nums text-sm shadow-inner'
 										title='Cost'
@@ -235,14 +254,14 @@ export function SorceryCard({
 							</div>
 
 							{stats && (
-								<div className='rounded-full bg-black/60 px-3 py-1 font-bold tabular-nums tracking-wider text-slate-100'>
+								<div className='rounded-full bg-black px-3 py-1 font-bold tabular-nums tracking-wider text-slate-100'>
 									{show(stats)}
 								</div>
 							)}
 						</div>
 
 						{/* Title */}
-						<div className='mt-2 rounded-md bg-black/40 px-3 py-2 text-lg font-semibold shadow-inner tracking-wider text-slate-100'>
+						<div className='mt-2 rounded-md bg-black px-3 py-2 text-lg font-semibold shadow-inner tracking-wider text-slate-100'>
 							{show(card.name)}
 						</div>
 
@@ -250,12 +269,12 @@ export function SorceryCard({
 						<div className='flex-1' />
 
 						{/* Type line */}
-						<div className='rounded-md bg-black/50 px-3 py-1 text-sm font-medium tracking-wider text-slate-200/90'>
+						<div className='rounded-md bg-black px-3 py-1 text-sm font-medium tracking-wider text-slate-200/90'>
 							{show(card.sets?.[0]?.variants?.[0]?.typeText ?? '')}
 						</div>
 
 						{/* Rules box */}
-						<div className='mt-2 rounded-xl border border-slate-600/50 bg-black/55 p-3'>
+						<div className='mt-2 rounded-xl border border-slate-600/50 bg-black p-3'>
 							<p className='whitespace-pre-line text-sm leading-snug tracking-wider text-slate-200/90'>
 								{renderRulesText(g.rulesText, guessed, revealAll)}
 							</p>
