@@ -228,12 +228,21 @@ export function SorceryCard({
 											`${card.name} — ${card.sets?.[0]?.variants?.[0]?.typeText ?? ''}`
 										)}
 									</span>
-									{thresholdIcons && (
-										<span
-											className='flex items-center rounded-md bg-black px-2 py-1 font-semibold tracking-wider text-slate-100'
-											title='Thresholds'
-										>
-											{thresholdIcons}
+									{(thresholdIcons || stats) && (
+										<span className='flex items-center gap-2'>
+											{thresholdIcons && (
+												<span
+													className='flex items-center rounded-md bg-black px-2 py-1 font-semibold tracking-wider text-slate-100'
+													title='Thresholds'
+												>
+													{thresholdIcons}
+												</span>
+											)}
+											{stats && (
+												<span className='rounded-full bg-black px-3 py-1 font-bold tabular-nums tracking-wider text-slate-100'>
+													{show(stats)}
+												</span>
+											)}
 										</span>
 									)}
 								</div>
