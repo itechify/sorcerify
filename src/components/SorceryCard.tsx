@@ -216,7 +216,7 @@ export function SorceryCard({
 			<div
 				className='relative w-full'
 				style={{
-					aspectRatio: isSite ? '531/380' : '395/546'
+					aspectRatio: isSite ? '531/380' : '380/531'
 				}}
 			>
 				<div className='absolute inset-0 flex flex-col p-3'>
