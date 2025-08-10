@@ -337,27 +337,37 @@ export function GameBoard({
 	return (
 		<div className='mx-auto flex flex-col items-center gap-4 sm:gap-6 w-full max-w-3xl'>
 			<div className='w-full flex justify-center'>
-				<div className='relative w-full max-w-sm sm:max-w-md md:max-w-lg rounded-3xl overflow-hidden'>
-					<SorceryCard
-						card={card}
-						guessed={guessed}
-						revealAll={Boolean(hasWon || hasLost)}
-					/>
-					{hasWon && (
-						<div className='pointer-events-none absolute inset-0 grid place-items-center rounded-3xl bg-green-600/20 backdrop-blur-[1px]'>
-							<span className='rounded-full bg-green-700/80 px-4 py-2 font-bold text-lg text-white shadow'>
-								You win!
-							</span>
+				{(() => {
+					const isSite = card.guardian.type === 'Site'
+					const wrapperSizeClasses = isSite
+						? 'w-full max-w-sm sm:max-w-md md:max-w-lg'
+						: 'w-full max-w-[275px] sm:max-w-[320px] md:max-w-[366px]'
+					return (
+						<div
+							className={`relative ${wrapperSizeClasses} rounded-3xl overflow-hidden`}
+						>
+							<SorceryCard
+								card={card}
+								guessed={guessed}
+								revealAll={Boolean(hasWon || hasLost)}
+							/>
+							{hasWon && (
+								<div className='pointer-events-none absolute inset-0 grid place-items-center rounded-3xl bg-green-600/20 backdrop-blur-[1px]'>
+									<span className='rounded-full bg-green-700/80 px-4 py-2 font-bold text-lg text-white shadow'>
+										You win!
+									</span>
+								</div>
+							)}
+							{hasLost && (
+								<div className='pointer-events-none absolute inset-0 grid place-items-center rounded-3xl bg-red-600/20 backdrop-blur-[1px]'>
+									<span className='rounded-full bg-red-700/80 px-4 py-2 font-bold text-lg text-white shadow'>
+										You lose!
+									</span>
+								</div>
+							)}
 						</div>
-					)}
-					{hasLost && (
-						<div className='pointer-events-none absolute inset-0 grid place-items-center rounded-3xl bg-red-600/20 backdrop-blur-[1px]'>
-							<span className='rounded-full bg-red-700/80 px-4 py-2 font-bold text-lg text-white shadow'>
-								You lose!
-							</span>
-						</div>
-					)}
-				</div>
+					)
+				})()}
 			</div>
 			<div className='flex items-center gap-3'>
 				<div className='rounded-md bg-black/40 px-3 py-1 font-semibold text-slate-100 text-sm'>
