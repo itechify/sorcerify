@@ -3,6 +3,7 @@ import {useMemo, useState} from 'react'
 import {type Card, getCards} from '@/api/cards'
 import {GameBoard} from '@/components/GameBoard'
 import {Head} from '@/components/Head'
+import {InfoModal} from '@/components/InfoModal'
 // no router links needed here; NavBar handles navigation
 import {NavBar} from '@/components/NavBar'
 
@@ -19,6 +20,7 @@ export function Practice() {
 	const allCardNames = useMemo<string[]>(() => data.map(c => c.name), [data])
 	const [streak, setStreak] = useState<number>(0)
 	const [roundEnded, setRoundEnded] = useState<boolean>(false)
+	const [infoOpen, setInfoOpen] = useState<boolean>(false)
 
 	function resetCard() {
 		if (data.length <= 1) {
@@ -37,7 +39,25 @@ export function Practice() {
 		<>
 			<Head title='Sorcerify — Practice' />
 			<NavBar />
-			<div className='min-h-[calc(100vh-56px)] pt-4 px-4 pb-8 w-full'>
+			<div className='relative min-h-[calc(100vh-56px)] pt-4 px-4 pb-8 w-full'>
+				<button
+					aria-label='How to play'
+					className='absolute right-4 top-4 rounded-full border-0 bg-transparent p-2 text-slate-200 hover:bg-slate-900/30 active:bg-slate-900/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 cursor-pointer'
+					onClick={() => setInfoOpen(true)}
+					type='button'
+				>
+					<svg
+						aria-hidden='true'
+						className='h-5 w-5'
+						viewBox='0 0 24 24'
+						xmlns='http://www.w3.org/2000/svg'
+					>
+						<title>Info</title>
+						<circle cx='12' cy='12' fill='#9ca3af' r='10' />
+						<rect fill='#0f172a' height='7' rx='1' width='2' x='11' y='10.5' />
+						<circle cx='12' cy='8' fill='#0f172a' r='1.25' />
+					</svg>
+				</button>
 				<div className='mx-auto flex flex-col items-center gap-3 w-full max-w-3xl'>
 					<img
 						alt='Sorcerify'
@@ -73,6 +93,7 @@ export function Practice() {
 					/>
 				</div>
 			</div>
+			<InfoModal onClose={() => setInfoOpen(false)} open={infoOpen} />
 		</>
 	)
 }
