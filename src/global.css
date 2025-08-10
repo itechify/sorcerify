@@ -30,6 +30,17 @@ html {
 	width: 100%;
 }
 
+/* Layout variables */
+:root {
+    /* Height of the navbar (matches NavBar padding/line-height). Adjust if NavBar changes. */
+    --navbar-height: 56px; /* approx. py-3 (24px top+bottom) + content height */
+}
+
+/* Ensure page content is not hidden beneath the fixed navbar */
+.with-fixed-navbar {
+    padding-top: var(--navbar-height);
+}
+
 /* Mobile-specific improvements */
 @media (max-width: 640px) {
 	/* Improve touch targets on mobile */

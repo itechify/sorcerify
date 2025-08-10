@@ -4,8 +4,6 @@ import {type Card, getCards} from '@/api/cards'
 import {GameBoard} from '@/components/GameBoard'
 import {Head} from '@/components/Head'
 import {InfoModal} from '@/components/InfoModal'
-// no router links needed here; NavBar handles navigation
-import {NavBar} from '@/components/NavBar'
 
 export function Practice() {
 	const {data} = useSuspenseQuery({
@@ -38,7 +36,6 @@ export function Practice() {
 	return (
 		<>
 			<Head title='Sorcerify — Practice' />
-			<NavBar />
 			<div className='relative pt-4 px-4 pb-8 w-full'>
 				<button
 					aria-label='How to play'
