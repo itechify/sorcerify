@@ -13,6 +13,55 @@ import {SorceryCard} from '@/components/SorceryCard'
 const THRESHOLD_TOKENS = ['air', 'earth', 'fire', 'water'] as const
 const LETTER_RE = /[a-zA-Z]/
 const SINGLE_ALNUM_RE = /^[a-zA-Z0-9]$/
+// Precompiled helpers for numeric guess handling in rules text
+const SINGLE_DIGIT_RE = /^\d$/
+const CIRCLED_DIGIT_START = 0x24_60 // Unicode start for ① (U+2460)
+
+function hasCircledDigit(text: string, digit: number): boolean {
+	if (digit < 1 || digit > 20) return false
+	const codePoint = CIRCLED_DIGIT_START + digit - 1
+	return text.includes(String.fromCodePoint(codePoint))
+}
+
+function guessMatchesThreshold(normalized: string, card: Card): boolean {
+	if (!(THRESHOLD_TOKENS as readonly string[]).includes(normalized))
+		return false
+	const thresholds = card.guardian.thresholds as Record<
+		string,
+		number | undefined
+	>
+	if ((thresholds[normalized] ?? 0) > 0) return true
+	const map: Record<string, string> = {
+		air: 'A',
+		earth: 'E',
+		fire: 'F',
+		water: 'W'
+	}
+	const code = map[normalized]
+	return new RegExp(`\\(${code}\\)`).test(card.guardian.rulesText)
+}
+
+function guessMatchesCircledDigit(
+	normalized: string,
+	rulesText: string
+): boolean {
+	if (!SINGLE_DIGIT_RE.test(normalized)) return false
+	const digit = Number(normalized)
+	return hasCircledDigit(rulesText, digit)
+}
+
+function textContainsNormalizedChar(
+	normalized: string,
+	texts: string[],
+	normalizer: (s: string) => string
+): boolean {
+	for (const text of texts) {
+		for (const ch of text) {
+			if (normalizer(ch) === normalized) return true
+		}
+	}
+	return false
+}
 
 function isTypingInInput(target: HTMLElement | null): boolean {
 	if (!target) return false
@@ -128,31 +177,16 @@ export function GameBoard({
 
 	const revealsAny = useCallback(
 		(normalized: string): boolean => {
-			// Threshold tokens
-			if ((THRESHOLD_TOKENS as readonly string[]).includes(normalized)) {
-				const thresholds = card.guardian.thresholds as Record<
-					string,
-					number | undefined
-				>
-				if ((thresholds[normalized] ?? 0) > 0) return true
-				const map: Record<string, string> = {
-					air: 'A',
-					earth: 'E',
-					fire: 'F',
-					water: 'W'
-				}
-				const code = map[normalized]
-				return new RegExp(`\\(${code}\\)`).test(card.guardian.rulesText)
-			}
-			// Text fields
-			for (const text of searchableTexts) {
-				for (const ch of text) {
-					if (normalizeCharForGuessing(ch) === normalized) return true
-				}
-			}
-			return false
+			if (guessMatchesThreshold(normalized, card)) return true
+			if (guessMatchesCircledDigit(normalized, card.guardian.rulesText))
+				return true
+			return textContainsNormalizedChar(
+				normalized,
+				searchableTexts,
+				normalizeCharForGuessing
+			)
 		},
-		[card.guardian, normalizeCharForGuessing, searchableTexts]
+		[card, normalizeCharForGuessing, searchableTexts]
 	)
 	const hasLost = remaining <= 0 && !hasWon
 
