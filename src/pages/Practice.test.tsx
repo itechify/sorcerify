@@ -54,34 +54,34 @@ vi.mock('@/api/cards', () => ({
 describe('Practice', () => {
 	beforeEach(() => {
 		vi.resetModules()
-        localStorage.clear()
+		localStorage.clear()
 	})
 
-    it('renders with initial streak text', async () => {
-        vi.doMock('@/components/GameBoard', () => ({
-            // biome-ignore lint: PascalCase export name required to match module
-            GameBoard: () => <div>GameBoard</div>
-        }))
-        const {Practice} = await import('./Practice')
-        render(<Practice />)
-        const streakEl = await screen.findByText(/Win streak:/)
-        expect(streakEl).toHaveTextContent(/Win streak:\s*0/)
-    })
+	it('renders with initial streak text', async () => {
+		vi.doMock('@/components/GameBoard', () => ({
+			// biome-ignore lint: PascalCase export name required to match module
+			GameBoard: () => <div>GameBoard</div>
+		}))
+		const {Practice} = await import('./Practice')
+		render(<Practice />)
+		const streakEl = await screen.findByText(/Win streak:/)
+		expect(streakEl).toHaveTextContent(/Win streak:\s*0/)
+	})
 
-    it('increments streak on win', async () => {
-        vi.doMock('@/components/GameBoard', () => ({
-            // biome-ignore lint: PascalCase export name required to match module
-            GameBoard: ({onWin}: {onWin?: () => void}) => {
-                const calledRef = useRef(false)
-                useEffect(() => {
-                    if (!calledRef.current) {
-                        calledRef.current = true
-                        onWin?.()
-                    }
-                }, [onWin])
-                return <div>GameBoard</div>
-            }
-        }))
+	it('increments streak on win', async () => {
+		vi.doMock('@/components/GameBoard', () => ({
+			// biome-ignore lint: PascalCase export name required to match module
+			GameBoard: ({onWin}: {onWin?: () => void}) => {
+				const calledRef = useRef(false)
+				useEffect(() => {
+					if (!calledRef.current) {
+						calledRef.current = true
+						onWin?.()
+					}
+				}, [onWin])
+				return <div>GameBoard</div>
+			}
+		}))
 		const {Practice} = await import('./Practice')
 		render(<Practice />)
 		const streakEl = await screen.findByText(/Win streak:/)
@@ -90,20 +90,20 @@ describe('Practice', () => {
 		})
 	})
 
-    it('resets streak on lose', async () => {
-        vi.doMock('@/components/GameBoard', () => ({
-            // biome-ignore lint: PascalCase export name required to match module
-            GameBoard: ({onLose}: {onLose?: () => void}) => {
-                const calledRef = useRef(false)
-                useEffect(() => {
-                    if (!calledRef.current) {
-                        calledRef.current = true
-                        onLose?.()
-                    }
-                }, [onLose])
-                return <div>GameBoard</div>
-            }
-        }))
+	it('resets streak on lose', async () => {
+		vi.doMock('@/components/GameBoard', () => ({
+			// biome-ignore lint: PascalCase export name required to match module
+			GameBoard: ({onLose}: {onLose?: () => void}) => {
+				const calledRef = useRef(false)
+				useEffect(() => {
+					if (!calledRef.current) {
+						calledRef.current = true
+						onLose?.()
+					}
+				}, [onLose])
+				return <div>GameBoard</div>
+			}
+		}))
 		const {Practice} = await import('./Practice')
 		render(<Practice />)
 		const streakEl = await screen.findByText(/Win streak:/)
