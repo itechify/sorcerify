@@ -39,7 +39,7 @@ export function Practice() {
 		<>
 			<Head title='Sorcerify — Practice' />
 			<NavBar />
-			<div className='relative min-h-[calc(100vh-56px)] pt-4 px-4 pb-8 w-full'>
+			<div className='relative pt-4 px-4 pb-8 w-full'>
 				<button
 					aria-label='How to play'
 					className='absolute right-4 top-4 rounded-full border-0 bg-transparent p-2 text-slate-200 hover:bg-slate-900/30 active:bg-slate-900/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 cursor-pointer'
