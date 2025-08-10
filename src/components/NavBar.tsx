@@ -56,8 +56,8 @@ export function NavBar() {
 	}
 
 	return (
-		<header className='sticky top-0 z-10 border-b border-purple-600 bg-indigo-950 backdrop-blur'>
-			<div className='mx-auto flex max-w-5xl items-center justify-between px-4 py-3'>
+		<header className='sticky top-0 z-10 border-b border-purple-600 bg-slate-950 backdrop-blur w-full'>
+			<div className='flex items-center justify-between px-4 py-3 w-full'>
 				<Link
 					className='flex items-center gap-2 text-lg font-semibold text-white'
 					to='/daily'
@@ -69,9 +69,9 @@ export function NavBar() {
 						src='/logo-small.png'
 						width='32'
 					/>
-					<span>Sorcerify</span>
+					<span className='hidden sm:inline'>Sorcerify</span>
 				</Link>
-				<nav className='flex items-center gap-2'>
+				<nav className='flex items-center gap-1 sm:gap-2'>
 					<NavLink
 						className={({isActive}) => navLinkClass(isActive)}
 						to='/daily'
@@ -84,8 +84,10 @@ export function NavBar() {
 					>
 						Practice
 					</NavLink>
-					<span className='ml-2 rounded-md bg-slate-900 px-2 py-1 text-xs font-semibold text-white'>
-						Daily Streak: <span className='tabular-nums'>{streak}</span>
+					<span className='ml-1 sm:ml-2 rounded-md bg-slate-900 px-2 py-1 text-xs font-semibold text-white'>
+						<span className='hidden sm:inline'>Daily Streak: </span>
+						<span className='sm:hidden'>Streak: </span>
+						<span className='tabular-nums'>{streak}</span>
 					</span>
 				</nav>
 			</div>

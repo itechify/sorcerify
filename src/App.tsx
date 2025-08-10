@@ -12,14 +12,16 @@ function renderError({error}: FallbackProps) {
 
 export function App() {
 	return (
-		<ErrorBoundary fallbackRender={renderError}>
-			<Suspense fallback={<LoadingOrError />}>
-				<Routes>
-					<Route element={<Home />} index={true} />
-					<Route element={<Daily />} path='/daily' />
-					<Route element={<Practice />} path='/practice' />
-				</Routes>
-			</Suspense>
-		</ErrorBoundary>
+		<div className='w-full overflow-x-hidden'>
+			<ErrorBoundary fallbackRender={renderError}>
+				<Suspense fallback={<LoadingOrError />}>
+					<Routes>
+						<Route element={<Home />} index={true} />
+						<Route element={<Daily />} path='/daily' />
+						<Route element={<Practice />} path='/practice' />
+					</Routes>
+				</Suspense>
+			</ErrorBoundary>
+		</div>
 	)
 }

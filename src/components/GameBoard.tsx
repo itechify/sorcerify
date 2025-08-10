@@ -335,8 +335,8 @@ export function GameBoard({
 	)
 
 	return (
-		<div className='flex flex-col items-center gap-6'>
-			<div className='relative'>
+		<div className='mx-auto flex flex-col items-center gap-4 sm:gap-6 w-full max-w-3xl'>
+			<div className='relative w-full flex justify-center'>
 				<SorceryCard
 					card={card}
 					guessed={guessed}
@@ -362,11 +362,8 @@ export function GameBoard({
 					Guesses left: <span className='tabular-nums'>{remaining}</span>
 				</div>
 			</div>
-			<div className='flex items-center gap-2'>
-				<label className='sr-only' htmlFor={`${id}-name-guess`}>
-					Guess card name
-				</label>
-				<div className='min-w-64'>
+			<div className='flex flex-col sm:flex-row items-center gap-3 w-full'>
+				<div className='w-full'>
 					<Select<NameOption>
 						inputId={`${id}-name-guess`}
 						isDisabled={hasWon || remaining <= 0}
@@ -385,7 +382,7 @@ export function GameBoard({
 					/>
 				</div>
 				<button
-					className='rounded-md border border-slate-300 bg-white cursor-pointer px-3 py-2 text-sm font-semibold text-slate-900 shadow hover:bg-slate-100 active:bg-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 disabled:opacity-50'
+					className='w-full sm:w-auto sm:flex-none whitespace-nowrap rounded-md border border-slate-300 bg-white cursor-pointer px-4 py-2 text-sm font-semibold text-slate-900 shadow hover:bg-slate-100 active:bg-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 disabled:opacity-50'
 					disabled={!nameGuessSelection || hasWon || remaining <= 0}
 					onClick={() => submitNameGuess(nameGuessSelection)}
 					type='button'
@@ -395,7 +392,7 @@ export function GameBoard({
 				{nameGuessStatus === 'incorrect' && (
 					<output
 						aria-live='polite'
-						className='ml-2 select-none text-sm font-semibold text-red-600'
+						className='w-full sm:w-auto text-center sm:text-left select-none text-sm font-semibold text-red-600'
 					>
 						Incorrect name
 					</output>

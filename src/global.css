@@ -4,3 +4,44 @@
 @theme {
 	--font-sans: Inter, sans-serif;
 }
+
+/* Use border-box sizing so padding/borders don't cause overflow on 100% width elements */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+/* Ensure consistent background color across the app */
+body {
+	width: 100%;
+	padding: 0;
+	margin: 0;
+	overflow-x: hidden;
+	background-color: #0f172a;
+}
+
+html {
+	width: 100%;
+	overflow-x: hidden;
+}
+
+#root {
+	width: 100%;
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 640px) {
+	/* Improve touch targets on mobile */
+	button,
+	[role="button"] {
+		min-width: 44px;
+		min-height: 44px;
+	}
+
+	/* Better text readability on small screens */
+	.text-sm {
+		font-size: 0.875rem;
+		line-height: 1.25rem;
+	}
+}

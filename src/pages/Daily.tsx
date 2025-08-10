@@ -114,16 +114,16 @@ export function Daily() {
 		<>
 			<Head title={`Sorcerify — Daily (${todayKey})`} />
 			<NavBar />
-			<div className='grid min-h-[calc(100vh-56px)] content-start justify-items-center pt-4 bg-slate-950'>
-				<div className='flex flex-col items-center gap-2'>
+			<div className='min-h-[calc(100vh-56px)] pt-4 px-4 pb-8 w-full'>
+				<div className='mx-auto flex flex-col items-center gap-2 w-full max-w-3xl'>
 					<img
 						alt='Sorcerify'
-						className='h-auto max-w-full'
+						className='h-auto w-full max-w-md'
 						height='120'
 						src='/logo.png'
 						width='420'
 					/>
-					<p className='text-sm text-slate-600'>
+					<p className='text-sm text-slate-400 text-center'>
 						Daily card for {todayKey} (UTC)
 					</p>
 					<GameBoard
@@ -134,7 +134,7 @@ export function Daily() {
 						onWin={handleWinToday}
 						persistKey={todayKey}
 					/>
-					<p className='text-xs text-slate-500'>
+					<p className='text-xs text-slate-500 text-center'>
 						Come back tomorrow for a new daily card.
 					</p>
 				</div>

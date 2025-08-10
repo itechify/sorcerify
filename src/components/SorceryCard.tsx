@@ -33,20 +33,22 @@ function renderThresholdImages(
 					{showIcon ? (
 						<img
 							alt={`${k} threshold`}
-							className='h-4 w-4'
+							className='h-3 w-3 sm:h-4 sm:w-4'
 							height={16}
 							src={THRESHOLD_ICON_SRC[k]}
 							width={16}
 						/>
 					) : (
-						<span className='inline-block h-4 w-4 rounded-sm bg-slate-200/30' />
+						<span className='inline-block h-3 w-3 sm:h-4 sm:w-4 rounded-sm bg-slate-200/30' />
 					)}
 				</span>
 			)
 		}
 	}
 	if (nodes.length === 0) return null
-	return <span className='inline-flex items-center gap-1'>{nodes}</span>
+	return (
+		<span className='inline-flex items-center gap-0.5 sm:gap-1'>{nodes}</span>
+	)
 }
 
 // Render rules text with inline threshold icons: (F)(A)(E)(W) -> images
@@ -83,13 +85,13 @@ function renderRulesText(
 				{isRevealed ? (
 					<img
 						alt={`${token} icon`}
-						className='mx-[1px] h-4 w-4'
+						className='mx-[1px] h-3 w-3 sm:h-4 sm:w-4'
 						height={16}
 						src={THRESHOLD_ICON_SRC[token]}
 						width={16}
 					/>
 				) : (
-					<span className='mx-[1px] inline-block h-4 w-4 rounded-sm bg-slate-200/30' />
+					<span className='mx-[1px] inline-block h-3 w-3 sm:h-4 sm:w-4 rounded-sm bg-slate-200/30' />
 				)}
 			</span>
 		)
@@ -100,7 +102,7 @@ function renderRulesText(
 		const content = isRevealed ? num : '_'
 		parts.push(
 			<span
-				className='ml-[2px] mr-[3px] inline-grid h-5 w-5 place-items-center rounded-full border border-slate-800/70 bg-slate-200 text-slate-900 tabular-nums text-[11px] leading-none shadow-inner align-text-bottom'
+				className='ml-[2px] mr-[3px] inline-grid h-4 w-4 sm:h-5 sm:w-5 place-items-center rounded-full border border-slate-800/70 bg-slate-200 text-slate-900 tabular-nums text-[10px] sm:text-[11px] leading-none shadow-inner align-text-bottom'
 				key={`rc-${keyIndex++}`}
 			>
 				{content}
@@ -196,13 +198,8 @@ export function SorceryCard({
 		? '/card-placeholders/AtlasBack.png'
 		: '/card-placeholders/SpellbookBack.png'
 
-	// Unified container sizing and a dark overlay for readability
-	const cardDimensions = isSite
-		? {width: 531, height: 380}
-		: {width: 395, height: 546}
-
+	// Responsive container sizing with aspect ratio preservation
 	const containerStyle: CSSProperties = {
-		...cardDimensions,
 		backgroundImage: `linear-gradient(to bottom, rgba(9, 13, 23, 0.72), rgba(9, 13, 23, 0.78)), url(${backgroundImageUrl})`,
 		backgroundSize: 'cover',
 		backgroundPosition: 'center',
@@ -212,119 +209,127 @@ export function SorceryCard({
 
 	return (
 		<div
-			className='relative overflow-hidden rounded-3xl border border-slate-700/60 shadow-xl'
+			className='relative overflow-hidden rounded-3xl border border-slate-700/60 shadow-xl w-full max-w-sm sm:max-w-md md:max-w-lg'
 			style={containerStyle}
 		>
-			<div className='relative flex h-full w-full flex-col p-3'>
-				{isSite ? (
-					<>
-						{/* For Site cards (landscape) */}
-						<div className='flex-1' />
-						<div className='overflow-hidden rounded-xl border border-slate-600/50 bg-black'>
-							<div className='border-b border-slate-600/50 px-3 py-1 text-sm font-medium text-slate-200/90'>
-								<div className='flex items-center justify-between gap-3'>
-									<span className='truncate tracking-wider'>
-										{show(
-											`${card.name} — ${card.sets?.[0]?.variants?.[0]?.typeText ?? ''}`
+			{/* Aspect ratio container for responsive sizing */}
+			<div
+				className='relative w-full'
+				style={{
+					aspectRatio: isSite ? '531/380' : '395/546'
+				}}
+			>
+				<div className='absolute inset-0 flex flex-col p-3'>
+					{isSite ? (
+						<>
+							{/* For Site cards (landscape) */}
+							<div className='flex-1' />
+							<div className='overflow-hidden rounded-xl border border-slate-600/50 bg-black'>
+								<div className='border-b border-slate-600/50 px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium text-slate-200/90'>
+									<div className='flex items-center justify-between gap-2 sm:gap-3'>
+										<span className='truncate tracking-wider'>
+											{show(
+												`${card.name} — ${card.sets?.[0]?.variants?.[0]?.typeText ?? ''}`
+											)}
+										</span>
+										{(thresholdIcons || stats) && (
+											<span className='flex items-center gap-1 sm:gap-2 flex-shrink-0'>
+												{thresholdIcons && (
+													<span
+														className='flex items-center rounded-md bg-black px-1 sm:px-2 py-1 font-semibold tracking-wider text-slate-100 text-xs'
+														title='Thresholds'
+													>
+														{thresholdIcons}
+													</span>
+												)}
+												{stats && (
+													<span className='rounded-full bg-black px-2 sm:px-3 py-1 font-bold tabular-nums tracking-wider text-slate-100 text-xs'>
+														{show(stats)}
+													</span>
+												)}
+											</span>
 										)}
-									</span>
-									{(thresholdIcons || stats) && (
-										<span className='flex items-center gap-2'>
+									</div>
+								</div>
+								<div className='px-2 sm:px-3 py-2'>
+									<p className='whitespace-pre-line text-xs sm:text-sm leading-snug tracking-wider text-slate-200/90'>
+										{renderRulesText(g.rulesText, guessed, revealAll)}
+									</p>
+								</div>
+							</div>
+						</>
+					) : (
+						<>
+							{/* Top bar: cost+thresholds (left) or life for Avatars, stats (right) */}
+							<div className='flex items-center justify-between'>
+								<div className='flex items-center gap-1 sm:gap-2'>
+									{isAvatar ? (
+										<span
+											className='inline-flex items-center gap-1 sm:gap-2 rounded-full bg-black px-1 sm:px-2 py-1 font-semibold tracking-wider text-slate-100'
+											title='Life'
+										>
+											<span className='relative inline-block h-6 w-6 sm:h-8 sm:w-8'>
+												<img
+													alt='Life icon'
+													className='h-6 w-6 sm:h-8 sm:w-8 select-none'
+													height={32}
+													src='/icons/blood-drop.svg'
+													width={32}
+												/>
+												<span className='absolute inset-0 grid place-items-center text-xs sm:text-sm font-bold text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]'>
+													{show(String(g.life ?? ''))}
+												</span>
+											</span>
+										</span>
+									) : (
+										<span className='inline-flex items-center gap-1 sm:gap-2 rounded-full bg-black px-1 sm:px-2 py-1 font-semibold tracking-wider text-slate-100'>
+											<span
+												className='grid h-5 w-5 sm:h-7 sm:w-7 place-items-center rounded-full border border-slate-800/70 bg-slate-200 text-slate-900 tabular-nums text-xs sm:text-sm shadow-inner'
+												title='Cost'
+											>
+												{show(String(g.cost))}
+											</span>
 											{thresholdIcons && (
 												<span
-													className='flex items-center rounded-md bg-black px-2 py-1 font-semibold tracking-wider text-slate-100'
+													className='inline-flex items-center'
 													title='Thresholds'
 												>
 													{thresholdIcons}
 												</span>
 											)}
-											{stats && (
-												<span className='rounded-full bg-black px-3 py-1 font-bold tabular-nums tracking-wider text-slate-100'>
-													{show(stats)}
-												</span>
-											)}
 										</span>
 									)}
 								</div>
-							</div>
-							<div className='px-3 py-2'>
-								<p className='whitespace-pre-line text-sm leading-snug tracking-wider text-slate-200/90'>
-									{renderRulesText(g.rulesText, guessed, revealAll)}
-								</p>
-							</div>
-						</div>
-					</>
-				) : (
-					<>
-						{/* Top bar: cost+thresholds (left) or life for Avatars, stats (right) */}
-						<div className='flex items-center justify-between'>
-							<div className='flex items-center gap-2'>
-								{isAvatar ? (
-									<span
-										className='inline-flex items-center gap-2 rounded-full bg-black px-2 py-1 font-semibold tracking-wider text-slate-100'
-										title='Life'
-									>
-										<span className='relative inline-block h-8 w-8'>
-											<img
-												alt='Life icon'
-												className='h-8 w-8 select-none'
-												height={32}
-												src='/icons/blood-drop.svg'
-												width={32}
-											/>
-											<span className='absolute inset-0 grid place-items-center text-sm font-bold text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]'>
-												{show(String(g.life ?? ''))}
-											</span>
-										</span>
-									</span>
-								) : (
-									<span className='inline-flex items-center gap-2 rounded-full bg-black px-2 py-1 font-semibold tracking-wider text-slate-100'>
-										<span
-											className='grid h-7 w-7 place-items-center rounded-full border border-slate-800/70 bg-slate-200 text-slate-900 tabular-nums text-sm shadow-inner'
-											title='Cost'
-										>
-											{show(String(g.cost))}
-										</span>
-										{thresholdIcons && (
-											<span
-												className='inline-flex items-center'
-												title='Thresholds'
-											>
-												{thresholdIcons}
-											</span>
-										)}
-									</span>
+
+								{stats && (
+									<div className='rounded-full bg-black px-2 sm:px-3 py-1 font-bold tabular-nums tracking-wider text-slate-100 text-xs sm:text-sm'>
+										{show(stats)}
+									</div>
 								)}
 							</div>
 
-							{stats && (
-								<div className='rounded-full bg-black px-3 py-1 font-bold tabular-nums tracking-wider text-slate-100'>
-									{show(stats)}
+							{/* Title */}
+							<div className='mt-2 rounded-md bg-black px-2 sm:px-3 py-2 text-base sm:text-lg font-semibold shadow-inner tracking-wider text-slate-100'>
+								{show(card.name)}
+							</div>
+
+							{/* Spacer to mimic art space */}
+							<div className='flex-1' />
+
+							{/* Bottom box: type header + rules together */}
+							<div className='mt-2 overflow-hidden rounded-xl border border-slate-600/50 bg-black'>
+								<div className='border-b border-slate-600/50 px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium tracking-wider text-slate-200/90'>
+									{show(card.sets?.[0]?.variants?.[0]?.typeText ?? '')}
 								</div>
-							)}
-						</div>
-
-						{/* Title */}
-						<div className='mt-2 rounded-md bg-black px-3 py-2 text-lg font-semibold shadow-inner tracking-wider text-slate-100'>
-							{show(card.name)}
-						</div>
-
-						{/* Spacer to mimic art space */}
-						<div className='flex-1' />
-
-						{/* Bottom box: type header + rules together */}
-						<div className='mt-2 overflow-hidden rounded-xl border border-slate-600/50 bg-black'>
-							<div className='border-b border-slate-600/50 px-3 py-1 text-sm font-medium tracking-wider text-slate-200/90'>
-								{show(card.sets?.[0]?.variants?.[0]?.typeText ?? '')}
+								<div className='px-2 sm:px-3 py-2'>
+									<p className='whitespace-pre-line text-xs sm:text-sm leading-snug tracking-wider text-slate-200/90'>
+										{renderRulesText(g.rulesText, guessed, revealAll)}
+									</p>
+								</div>
 							</div>
-							<div className='px-3 py-2'>
-								<p className='whitespace-pre-line text-sm leading-snug tracking-wider text-slate-200/90'>
-									{renderRulesText(g.rulesText, guessed, revealAll)}
-								</p>
-							</div>
-						</div>
-					</>
-				)}
+						</>
+					)}
+				</div>
 			</div>
 		</div>
 	)
