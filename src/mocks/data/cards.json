@@ -50893,7 +50893,7 @@
       "rulesText": "Tap → Play or draw a site.\n\nThe first Knight, Sir, or Dame you cast each turn costs (1) less.",
       "cost": null,
       "attack": 2,
-      "defence": null,
+      "defence": 2,
       "life": 20,
       "thresholds": {
         "air": 0,

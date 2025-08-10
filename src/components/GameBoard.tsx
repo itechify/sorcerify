@@ -7,6 +7,7 @@ import Select, {
 import type {Card} from '@/api/cards'
 import {Keyboard} from '@/components/Keyboard'
 import {SorceryCard} from '@/components/SorceryCard'
+import {WinSparkles} from '@/components/WinSparkles'
 
 // Top-level constants for performance (linter preference)
 // Threshold tokens used for guessing/searching
@@ -385,15 +386,16 @@ export function GameBoard({
 								guessed={guessed}
 								revealAll={Boolean(hasWon || hasLost)}
 							/>
+							<WinSparkles active={hasWon} />
 							{hasWon && (
-								<div className='pointer-events-none absolute inset-0 grid place-items-center rounded-3xl bg-green-600/20 backdrop-blur-[1px]'>
+								<div className='pointer-events-none absolute inset-0 grid place-items-center rounded-3xl'>
 									<span className='rounded-full bg-green-700/80 px-4 py-2 font-bold text-lg text-white shadow'>
 										You win!
 									</span>
 								</div>
 							)}
 							{hasLost && (
-								<div className='pointer-events-none absolute inset-0 grid place-items-center rounded-3xl bg-red-600/20 backdrop-blur-[1px]'>
+								<div className='pointer-events-none absolute inset-0 grid place-items-center rounded-3xl'>
 									<span className='rounded-full bg-red-700/80 px-4 py-2 font-bold text-lg text-white shadow'>
 										You lose!
 									</span>
