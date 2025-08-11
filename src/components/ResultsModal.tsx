@@ -113,7 +113,7 @@ export function ResultsModal({
 							{copied ? 'Copied!' : 'Copy to clipboard'}
 						</button>
 						<a
-							className='rounded-md border border-slate-700 bg-slate-800 cursor-pointer px-3 py-2 text-sm font-semibold text-slate-100 shadow hover:bg-slate-700 active:bg-slate-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400'
+							className='text-center rounded-md border border-slate-700 bg-slate-800 cursor-pointer px-3 py-2 text-sm font-semibold text-slate-100 shadow hover:bg-slate-700 active:bg-slate-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400'
 							href={curiosaUrl}
 							rel='noopener noreferrer'
 							target='_blank'
