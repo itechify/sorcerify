@@ -99,6 +99,7 @@ export function GameBoard({
 		hasWon: boolean
 		nameGuessed?: string[]
 		nameGuessSelection?: string
+		results?: ('correct' | 'incorrect')[]
 	}
 
 	function readCentralEntry(): PersistedState | null {
@@ -148,6 +149,10 @@ export function GameBoard({
 	const nameGuessedRef = useRef<Set<string>>(initialNameGuessed)
 	const [nameGuessed, setNameGuessed] =
 		useState<Set<string>>(initialNameGuessed)
+	const [results, setResults] = useState<Array<'correct' | 'incorrect'>>(() => {
+		const entry = readCentralEntry()
+		return entry?.results ?? []
+	})
 	const winReportedRef = useRef<boolean>(false)
 	const loseReportedRef = useRef<boolean>(false)
 	const id = useId()
@@ -200,8 +205,10 @@ export function GameBoard({
 			setGuessed(prev => new Set(prev).add(normalized))
 			if (revealsAny(normalized)) {
 				setCorrect(prev => new Set(prev).add(normalized))
+				setResults(prev => [...prev, 'correct'])
 			} else {
 				setIncorrect(prev => new Set(prev).add(normalized))
+				setResults(prev => [...prev, 'incorrect'])
 			}
 			setRemaining(prev => Math.max(0, prev - 1))
 		},
@@ -239,6 +246,7 @@ export function GameBoard({
 				setNameGuessed(prev => new Set(prev).add(nameValue))
 				if (nameValue === card.name) {
 					setHasWon(true)
+					setResults(prev => [...prev, 'correct'])
 				} else {
 					// transient feedback for incorrect name guess
 					setNameGuessStatus('incorrect')
@@ -248,6 +256,7 @@ export function GameBoard({
 					nameGuessStatusTimeoutRef.current = window.setTimeout(() => {
 						setNameGuessStatus(null)
 					}, 1500)
+					setResults(prev => [...prev, 'incorrect'])
 				}
 				setRemaining(prev => Math.max(0, prev - 1))
 			}
@@ -265,7 +274,8 @@ export function GameBoard({
 			remaining,
 			hasWon,
 			nameGuessed: Array.from(nameGuessedRef.current),
-			nameGuessSelection
+			nameGuessSelection,
+			results
 		}
 		try {
 			const raw = localStorage.getItem(centralStorageKey)
@@ -284,7 +294,8 @@ export function GameBoard({
 		incorrect,
 		remaining,
 		hasWon,
-		nameGuessSelection
+		nameGuessSelection,
+		results
 	])
 
 	// Fire onWin once when winning state is reached
@@ -405,6 +416,31 @@ export function GameBoard({
 					)
 				})()}
 			</div>
+			{(() => {
+				const segmentColor = (r: 'correct' | 'incorrect' | null): string => {
+					if (r === 'correct') return 'bg-emerald-500'
+					if (r === 'incorrect') return 'bg-red-500'
+					return 'bg-slate-600/50'
+				}
+				const total = 7
+				const segments = Array.from(
+					{length: total},
+					(_, i) => results[i] ?? null
+				)
+				const positions = Array.from({length: total}, (_, i) => `pos-${i}`)
+				return (
+					<div className='w-full max-w-md px-2'>
+						<div className='flex gap-1'>
+							{positions.map((pos, i) => (
+								<div
+									className={`h-2 flex-1 rounded-sm ${segmentColor(segments[i] ?? null)}`}
+									key={pos}
+								/>
+							))}
+						</div>
+					</div>
+				)
+			})()}
 			<div className='flex items-center gap-3'>
 				<div className='rounded-md bg-black/40 px-3 py-1 font-semibold text-slate-100 text-sm'>
 					Guesses left: <span className='tabular-nums'>{remaining}</span>

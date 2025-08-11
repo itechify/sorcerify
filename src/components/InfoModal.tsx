@@ -55,7 +55,7 @@ export function InfoModal({
 					</h2>
 					<button
 						aria-label='Close'
-						className='rounded-md p-1 text-slate-300 hover:bg-slate-800 hover:text-white active:bg-slate-700'
+						className='rounded-md p-1 text-slate-300 hover:bg-slate-800 hover:text-white active:bg-slate-700 cursor-pointer'
 						onClick={onClose}
 						type='button'
 					>
