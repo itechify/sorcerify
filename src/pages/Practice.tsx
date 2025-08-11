@@ -66,18 +66,20 @@ export function Practice() {
 					<div className='rounded-md bg-green-600/10 px-3 py-1 text-sm font-semibold text-green-200'>
 						Win streak: <span className='tabular-nums'>{streak}</span>
 					</div>
-					{roundEnded && (
-						<button
-							className='mt-1 border border-slate-300 bg-white cursor-pointer px-4 py-2 text-sm font-semibold text-slate-900 shadow hover:bg-slate-100 active:bg-slate-200 rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400'
-							onClick={resetCard}
-							type='button'
-						>
-							Next Card
-						</button>
-					)}
 					<GameBoard
 						allCardNames={allCardNames}
 						card={card}
+						endOfRoundAction={
+							roundEnded ? (
+								<button
+									className='rounded-md border border-slate-300 bg-white cursor-pointer px-3 py-1 font-semibold text-slate-900 text-sm shadow hover:bg-slate-100 active:bg-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400'
+									onClick={resetCard}
+									type='button'
+								>
+									Next Card
+								</button>
+							) : null
+						}
 						key={cardIndex}
 						onLose={() => {
 							setStreak(0)

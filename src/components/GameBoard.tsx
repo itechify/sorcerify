@@ -1,4 +1,12 @@
-import {useCallback, useEffect, useId, useMemo, useRef, useState} from 'react'
+import {
+	type ReactNode,
+	useCallback,
+	useEffect,
+	useId,
+	useMemo,
+	useRef,
+	useState
+} from 'react'
 import Select, {
 	type GroupBase,
 	type Props as SelectProps,
@@ -81,13 +89,15 @@ export function GameBoard({
 	allCardNames,
 	persistKey,
 	onWin,
-	onLose
+	onLose,
+	endOfRoundAction
 }: {
 	card: Card
 	allCardNames: string[]
 	persistKey?: string
 	onWin?: () => void
 	onLose?: () => void
+	endOfRoundAction?: ReactNode
 }) {
 	// Centralized storage key; each game's state is stored under a sub-key
 	const centralStorageKey = 'sorcerify:progress'
@@ -435,23 +445,36 @@ export function GameBoard({
 					</div>
 				)
 			})()}
-			{persistKey && (hasWon || hasLost) ? (
-				<div className='flex items-center gap-3'>
-					<button
-						className='rounded-md border border-slate-300 bg-white cursor-pointer px-3 py-1 font-semibold text-slate-900 text-sm shadow hover:bg-slate-100 active:bg-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400'
-						onClick={() => setResultsOpen(true)}
-						type='button'
-					>
-						Results
-					</button>
-				</div>
-			) : (
-				<div className='flex items-center gap-3'>
-					<div className='rounded-md bg-black/40 px-3 py-1 font-semibold text-slate-100 text-sm'>
-						Guesses left: <span className='tabular-nums'>{remaining}</span>
+			{(() => {
+				if (hasWon || hasLost) {
+					if (persistKey) {
+						return (
+							<div className='flex items-center gap-3'>
+								<button
+									className='rounded-md border border-slate-300 bg-white cursor-pointer px-3 py-1 font-semibold text-slate-900 text-sm shadow hover:bg-slate-100 active:bg-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400'
+									onClick={() => setResultsOpen(true)}
+									type='button'
+								>
+									Results
+								</button>
+							</div>
+						)
+					}
+					if (endOfRoundAction) {
+						return (
+							<div className='flex items-center gap-3'>{endOfRoundAction}</div>
+						)
+					}
+					return null
+				}
+				return (
+					<div className='flex items-center gap-3'>
+						<div className='rounded-md bg-black/40 px-3 py-1 font-semibold text-slate-100 text-sm'>
+							Guesses left: <span className='tabular-nums'>{remaining}</span>
+						</div>
 					</div>
-				</div>
-			)}
+				)
+			})()}
 			<div className='flex flex-col sm:flex-row items-center gap-3 w-full'>
 				<div className='w-full'>
 					<Select<NameOption>
