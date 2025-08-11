@@ -200,6 +200,8 @@ export function GameBoard({
 
 	const handlePress = useCallback(
 		(char: string) => {
+			// Reserve the final guess for a name guess only
+			if (remaining <= 1 || hasWon) return
 			const normalized = normalizeCharForGuessing(char)
 			if (guessed.has(normalized)) return
 			setGuessed(prev => new Set(prev).add(normalized))
@@ -212,12 +214,13 @@ export function GameBoard({
 			}
 			setRemaining(prev => Math.max(0, prev - 1))
 		},
-		[guessed, normalizeCharForGuessing, revealsAny]
+		[guessed, hasWon, normalizeCharForGuessing, remaining, revealsAny]
 	)
 
 	useEffect(() => {
 		function onKeyDown(e: KeyboardEvent) {
-			if (hasWon || remaining <= 0) return
+			// Block typing guesses when only the final attempt remains
+			if (hasWon || remaining <= 1) return
 			const target = e.target as HTMLElement | null
 			if (isTypingInInput(target)) return
 			const key = e.key
@@ -484,7 +487,7 @@ export function GameBoard({
 			</div>
 			<Keyboard
 				correct={correct}
-				disabled={hasWon || remaining <= 0}
+				disabled={hasWon || remaining <= 1}
 				incorrect={incorrect}
 				onPress={handlePress}
 			/>
