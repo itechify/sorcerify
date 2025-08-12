@@ -16,6 +16,7 @@ import type {Card} from '@/api/cards'
 import {Keyboard} from '@/components/Keyboard'
 import {ResultsModal} from '@/components/ResultsModal'
 import {SorceryCard} from '@/components/SorceryCard'
+import {Button} from '@/components/ui/button'
 import {WinSparkles} from '@/components/WinSparkles'
 
 // Top-level constants for performance (linter preference)
@@ -450,13 +451,13 @@ export function GameBoard({
 					if (persistKey) {
 						return (
 							<div className='flex items-center gap-3'>
-								<button
+								<Button
 									className='rounded-md border border-slate-300 bg-white cursor-pointer px-3 py-1 font-semibold text-slate-900 text-sm shadow hover:bg-slate-100 active:bg-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400'
 									onClick={() => setResultsOpen(true)}
 									type='button'
 								>
 									Results
-								</button>
+								</Button>
 							</div>
 						)
 					}
@@ -494,14 +495,14 @@ export function GameBoard({
 						}
 					/>
 				</div>
-				<button
+				<Button
 					className='w-full sm:w-auto sm:flex-none whitespace-nowrap rounded-md border border-slate-300 bg-white cursor-pointer px-4 py-2 text-sm font-semibold text-slate-900 shadow hover:bg-slate-100 active:bg-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 disabled:opacity-50'
 					disabled={!nameGuessSelection || hasWon || remaining <= 0}
 					onClick={() => submitNameGuess(nameGuessSelection)}
 					type='button'
 				>
 					Guess name
-				</button>
+				</Button>
 				{/* name guess status removed */}
 			</div>
 			<Keyboard

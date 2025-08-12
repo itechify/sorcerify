@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react'
 import {Link, NavLink} from 'react-router'
+import {buttonVariants} from '@/components/ui/button'
 
 export function NavBar() {
 	const [streak, setStreak] = useState<number>(() => {
@@ -48,15 +49,8 @@ export function NavBar() {
 		}
 	}, [])
 
-	function navLinkClass(isActive: boolean): string {
-		const base = 'px-3 py-1.5 text-sm font-medium rounded-md'
-		const active = 'bg-slate-900 text-white'
-		const inactive = 'text-white hover:bg-slate-900 active:bg-slate-600'
-		return `${base} ${isActive ? active : inactive}`
-	}
-
 	return (
-		<header className='fixed top-0 left-0 right-0 z-30 border-b border-purple-600 bg-slate-950 backdrop-blur w-full'>
+		<header className='fixed top-0 left-0 right-0 z-30 backdrop-blur w-full'>
 			<div className='flex items-center justify-between px-4 py-3 w-full'>
 				<Link
 					className='flex items-center gap-2 text-lg font-semibold text-white'
@@ -73,13 +67,23 @@ export function NavBar() {
 				</Link>
 				<nav className='flex items-center gap-1 sm:gap-2'>
 					<NavLink
-						className={({isActive}) => navLinkClass(isActive)}
+						className={({isActive}) =>
+							buttonVariants({
+								variant: isActive ? 'default' : 'ghost',
+								size: 'sm'
+							})
+						}
 						to='/daily'
 					>
 						Daily
 					</NavLink>
 					<NavLink
-						className={({isActive}) => navLinkClass(isActive)}
+						className={({isActive}) =>
+							buttonVariants({
+								variant: isActive ? 'default' : 'ghost',
+								size: 'sm'
+							})
+						}
 						to='/practice'
 					>
 						Practice

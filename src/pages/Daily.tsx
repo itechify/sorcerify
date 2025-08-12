@@ -4,6 +4,7 @@ import {type Card, getCards} from '@/api/cards'
 import {GameBoard} from '@/components/GameBoard'
 import {Head} from '@/components/Head'
 import {InfoModal} from '@/components/InfoModal'
+import {Button} from '@/components/ui/button'
 
 function formatUtcDateKey(date: Date): string {
 	const y = date.getUTCFullYear()
@@ -114,7 +115,7 @@ export function Daily() {
 		<>
 			<Head title={`Sorcerify — Daily (${todayKey})`} />
 			<div className='relative pt-4 px-4 pb-8 w-full'>
-				<button
+				<Button
 					aria-label='How to play'
 					className='absolute right-4 top-4 rounded-full border-0 bg-transparent p-2 text-slate-200 hover:bg-slate-900/30 active:bg-slate-900/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 cursor-pointer'
 					onClick={() => setInfoOpen(true)}
@@ -131,7 +132,7 @@ export function Daily() {
 						<rect fill='#0f172a' height='7' rx='1' width='2' x='11' y='10.5' />
 						<circle cx='12' cy='8' fill='#0f172a' r='1.25' />
 					</svg>
-				</button>
+				</Button>
 				<div className='mx-auto flex flex-col items-center gap-2 w-full max-w-3xl'>
 					<img
 						alt='Sorcerify'

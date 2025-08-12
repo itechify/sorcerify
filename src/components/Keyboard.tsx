@@ -1,3 +1,5 @@
+import {Button} from '@/components/ui/button'
+
 export function Keyboard({
 	correct,
 	disabled,
@@ -53,22 +55,16 @@ export function Keyboard({
 		const isGuessed = isCorrect || isIncorrect
 		const isThreshold = thresholds.includes(char)
 
-		let buttonClass =
-			'w-8 h-8 sm:w-10 sm:h-10 rounded-md font-semibold text-sm sm:text-base transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400'
-
-		if (isCorrect) {
-			buttonClass += ' bg-green-600 text-white cursor-default'
-		} else if (isIncorrect) {
-			buttonClass += ' bg-red-600 text-white cursor-default'
-		} else if (disabled) {
-			buttonClass += ' bg-slate-300 text-slate-500 cursor-default'
-		} else {
-			buttonClass +=
-				' bg-slate-200 text-slate-900 hover:bg-slate-300 active:bg-slate-400 cursor-pointer'
-		}
+		let colorClass = 'transition-colors'
+		if (isCorrect) colorClass += ' bg-green-600 text-white'
+		else if (isIncorrect) colorClass += ' bg-red-600 text-white'
+		else if (disabled) colorClass += ' bg-slate-300 text-slate-500'
+		else
+			colorClass +=
+				' bg-slate-200 text-slate-900 hover:bg-slate-300 active:bg-slate-400'
 
 		const buttonProps = {
-			className: buttonClass,
+			className: `size-8 sm:size-10 ${colorClass}`,
 			disabled: disabled || isGuessed,
 			onClick: () => onPress(char),
 			type: 'button' as const,
@@ -77,22 +73,22 @@ export function Keyboard({
 
 		if (isThreshold) {
 			return (
-				<button key={char} {...buttonProps}>
+				<Button key={char} size='icon' {...buttonProps}>
 					<img
 						alt={`${char} threshold`}
-						className='h-4 w-4 sm:h-5 sm:w-5 mx-auto'
+						className='size-4 sm:size-5 mx-auto'
 						height={20}
 						src={tokenSrc[char]}
 						width={20}
 					/>
-				</button>
+				</Button>
 			)
 		}
 
 		return (
-			<button key={char} {...buttonProps}>
+			<Button key={char} size='icon' {...buttonProps}>
 				{char}
-			</button>
+			</Button>
 		)
 	}
 
