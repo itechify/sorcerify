@@ -13,16 +13,60 @@ function formatUtcDateKey(date: Date): string {
 	return `${y}-${m}-${d}`
 }
 
-function hashStringToNumber(input: string): number {
-	// Simple polynomial rolling hash without bitwise operations
-	// modulus is a large prime below Number.MAX_SAFE_INTEGER
-	const modPrime = 9_007_199_254_740_881
-	const baseMultiplier = 131
-	let hash = 0
-	for (let i = 0; i < input.length; i++) {
-		hash = (hash * baseMultiplier + input.charCodeAt(i)) % modPrime
+// Deterministic RNG and permutation helpers for non-repeating daily selection
+
+const getUtcDayNumber = (date: Date): number => {
+	// Number of whole days since Unix epoch (UTC)
+	const utcMidnight = Date.UTC(
+		date.getUTCFullYear(),
+		date.getUTCMonth(),
+		date.getUTCDate()
+	)
+	return Math.floor(utcMidnight / 86_400_000)
+}
+
+// String → 64-bit seed using polynomial rolling hash in 64-bit space
+const hashStringTo64Bit = (seedString: string): bigint => {
+	const mod64 = 2n ** 64n
+	const base = 131n
+	let h = 1_469_598_103_934_665_603n // non-zero start
+	for (let i = 0; i < seedString.length; i++) {
+		h = (h * base + BigInt(seedString.charCodeAt(i))) % mod64
 	}
-	return hash
+	if (h === 0n) return 1n
+	return h
+}
+
+// 64-bit LCG (LCG64) producing a [0,1) double without bitwise operations
+const createLcg64 = (seedString: string): (() => number) => {
+	const mod64 = 2n ** 64n
+	const lcgA = 6_364_136_223_846_793_005n
+	const lcgC = 1_442_695_040_888_963_407n
+	const scale = mod64 / 2n ** 53n // to extract top 53 bits
+	let state = hashStringTo64Bit(seedString)
+	return () => {
+		state = (lcgA * state + lcgC) % mod64
+		const top53 = state / scale
+		return Number(top53) / 2 ** 53
+	}
+}
+
+const buildDeterministicPermutation = (
+	length: number,
+	seedString: string
+): number[] => {
+	const rng = createLcg64(seedString)
+	const arr = Array.from({length}, (_, i) => i)
+	// Fisher-Yates shuffle
+	for (let i = length - 1; i > 0; i--) {
+		const j = Math.floor(rng() * (i + 1))
+		const valueAtI = arr[i]
+		const valueAtJ = arr[j]
+		if (valueAtI === undefined || valueAtJ === undefined) continue
+		arr[i] = valueAtJ
+		arr[j] = valueAtI
+	}
+	return arr
 }
 
 export function Daily() {
@@ -31,13 +75,23 @@ export function Daily() {
 		queryKey: ['cards']
 	})
 
-	const todayKey = useMemo(() => formatUtcDateKey(new Date()), [])
+	const today = useMemo(() => new Date(), [])
+	const todayKey = useMemo(() => formatUtcDateKey(today), [today])
 
+	// Create a deterministic, non-repeating order of cards and walk it by day number
 	const cardIndex = useMemo(() => {
-		if (data.length === 0) return 0
-		const hash = hashStringToNumber(todayKey)
-		return hash % data.length
-	}, [data.length, todayKey])
+		const total = data.length
+		if (total === 0) return 0
+		// Seed ties the permutation to current card set size and a stable string
+		const permutation = buildDeterministicPermutation(
+			total,
+			`sorcerify-daily-v1|count:${total}`
+		)
+		const dayNumber = getUtcDayNumber(today)
+		const pos = dayNumber % total
+		const chosen = permutation[pos]
+		return chosen ?? 0
+	}, [data.length, today])
 
 	const card = useMemo<Card>(() => data[cardIndex] as Card, [data, cardIndex])
 	const allCardNames = useMemo<string[]>(() => data.map(c => c.name), [data])
