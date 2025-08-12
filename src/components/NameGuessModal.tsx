@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useRef, useState} from 'react'
+import {type ReactNode, useEffect, useMemo, useRef, useState} from 'react'
 import {Button} from '@/components/ui/button'
 import {
 	Dialog,
@@ -44,27 +44,87 @@ export function NameGuessModal({
 		}
 	}, [open])
 
-	// Group contiguous slots into word groups so the UI wraps per-word
-	interface Slot {
+	// Group contiguous slots into word groups so the UI wraps per-word.
+	// Letter slots are guessable. Symbols like hyphens/apostrophes are auto-filled.
+	interface LetterSlot {
+		kind: 'slot'
 		raw: string
 		lower: string
 	}
+	interface SymbolSlot {
+		kind: 'symbol'
+		char: string
+	}
+	type Slot = LetterSlot | SymbolSlot
 	interface WordGroup {
 		letters: Slot[]
+	}
+
+	function renderNameSlots(
+		wordGroups: WordGroup[],
+		typed: string[],
+		guessedSet: Set<string>
+	): ReactNode[] {
+		let slotIndex = 0
+		return wordGroups.map(g => {
+			const groupStart = slotIndex
+			const nodes = g.letters.map((t, li) => {
+				if (t.kind === 'symbol') {
+					return (
+						<div
+							className='grid place-items-center h-10 w-8 sm:w-9 rounded-md bg-slate-300/60 text-slate-900 font-semibold select-none'
+							key={`sym-${groupStart + li}-${t.char}`}
+						>
+							<span className='opacity-60'>{t.char}</span>
+						</div>
+					)
+				}
+
+				const typedChar = typed[slotIndex++]
+				const hint = guessedSet.has(t.lower) ? t.raw.toUpperCase() : ''
+				const show = typedChar ?? hint
+				const isHint = typedChar == null && Boolean(hint)
+				return (
+					<div
+						className='grid place-items-center h-10 w-8 sm:w-9 rounded-md bg-slate-300/80 text-slate-900 font-semibold select-none'
+						key={`slot-${groupStart + li}-${t.raw}-${t.lower}`}
+					>
+						<span className={isHint ? 'opacity-40' : ''}>{show ?? ''}</span>
+					</div>
+				)
+			})
+			return (
+				<div
+					className='mr-4 sm:mr-5 last:mr-0 flex flex-wrap gap-2'
+					key={`grp-${groupStart}-${nodes.length}`}
+				>
+					{nodes}
+				</div>
+			)
+		})
 	}
 
 	const groups = useMemo<WordGroup[]>(() => {
 		const out: WordGroup[] = []
 		let current: Slot[] = []
+		const flush = () => {
+			if (current.length > 0) out.push({letters: current})
+			current = []
+		}
 		for (const ch of cardName) {
 			if (ALNUM_RE.test(ch)) {
-				current.push({raw: ch, lower: ch.toLowerCase()})
-			} else if (ch === ' ') {
-				if (current.length > 0) out.push({letters: current})
-				current = []
+				current.push({kind: 'slot', raw: ch, lower: ch.toLowerCase()})
+				continue
+			}
+			if (ch === ' ') {
+				flush()
+				continue
+			}
+			if (ch === '-' || ch === "'" || ch === '’') {
+				current.push({kind: 'symbol', char: ch})
 			}
 		}
-		if (current.length > 0) out.push({letters: current})
+		flush()
 		return out
 	}, [cardName])
 
@@ -74,15 +134,19 @@ export function NameGuessModal({
 
 	// Determine if all visible slots are filled either by typed characters or hints
 	const totalSlots = useMemo(() => {
-		return groups.reduce((sum, group) => sum + group.letters.length, 0)
+		return groups.reduce(
+			(sum, group) => sum + group.letters.filter(l => l.kind === 'slot').length,
+			0
+		)
 	}, [groups])
 
 	const hintCount = useMemo(() => {
-		return groups.reduce(
-			(sum, group) =>
-				sum + group.letters.filter(t => guessed.has(t.lower)).length,
-			0
-		)
+		return groups.reduce((sum, group) => {
+			const groupHints = group.letters.reduce((acc, t) => {
+				return acc + (t.kind === 'slot' && guessed.has(t.lower) ? 1 : 0)
+			}, 0)
+			return sum + groupHints
+		}, 0)
 	}, [groups, guessed])
 
 	const isAllSlotsCovered = typedLetters.length + hintCount >= totalSlots
@@ -141,38 +205,7 @@ export function NameGuessModal({
 								onKeyDown={() => inputRef.current?.focus()}
 								type='button'
 							>
-								{(() => {
-									let slotIndex = 0
-									return groups.map(g => {
-										const groupStart = slotIndex
-										const nodes = g.letters.map((t, li) => {
-											const typed = typedLetters[slotIndex++]
-											const hint = guessed.has(t.lower)
-												? t.raw.toUpperCase()
-												: ''
-											const show = typed ?? hint
-											const isHint = typed == null && Boolean(hint)
-											return (
-												<div
-													className='grid place-items-center h-10 w-8 sm:w-9 rounded-md bg-slate-300/80 text-slate-900 font-semibold select-none'
-													key={`slot-${groupStart + li}-${t.raw}-${t.lower}`}
-												>
-													<span className={isHint ? 'opacity-40' : ''}>
-														{show ?? ''}
-													</span>
-												</div>
-											)
-										})
-										return (
-											<div
-												className='mr-4 sm:mr-5 last:mr-0 flex flex-wrap gap-2'
-												key={`grp-${groupStart}-${nodes.length}`}
-											>
-												{nodes}
-											</div>
-										)
-									})
-								})()}
+								{renderNameSlots(groups, typedLetters, guessed)}
 							</button>
 						</div>
 					</div>
