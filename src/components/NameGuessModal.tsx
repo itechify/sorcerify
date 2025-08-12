@@ -72,9 +72,27 @@ export function NameGuessModal({
 		return normalizeAlnum(value).toUpperCase().split('')
 	}, [value])
 
+	// Determine if all visible slots are filled either by typed characters or hints
+	const totalSlots = useMemo(() => {
+		return groups.reduce((sum, group) => sum + group.letters.length, 0)
+	}, [groups])
+
+	const hintCount = useMemo(() => {
+		return groups.reduce(
+			(sum, group) =>
+				sum + group.letters.filter(t => guessed.has(t.lower)).length,
+			0
+		)
+	}, [groups, guessed])
+
+	const isAllSlotsCovered = typedLetters.length + hintCount >= totalSlots
+
+	const isValueProvided = useMemo(() => Boolean(value.trim()), [value])
+	const isSubmitEnabled = isValueProvided && isAllSlotsCovered
+
 	function submit() {
 		const trimmed = value.trim()
-		if (!trimmed) return
+		if (!isSubmitEnabled) return
 		onSubmit(trimmed)
 	}
 
@@ -163,7 +181,7 @@ export function NameGuessModal({
 					<Button onClick={onClose} variant='outline'>
 						Cancel
 					</Button>
-					<Button disabled={!value.trim()} onClick={submit}>
+					<Button disabled={!isSubmitEnabled} onClick={submit}>
 						Submit
 					</Button>
 				</DialogFooter>
