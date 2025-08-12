@@ -1,0 +1,176 @@
+import {useEffect, useMemo, useRef, useState} from 'react'
+import {Button} from '@/components/ui/button'
+import {
+	Dialog,
+	DialogContent,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle
+} from '@/components/ui/dialog'
+
+const ALNUM_RE = /[a-zA-Z0-9]/
+const INPUT_SANITIZE_RE = /[^a-zA-Z0-9 ' -]/g
+
+function normalizeAlnum(s: string): string {
+	return s
+		.split('')
+		.filter(ch => ALNUM_RE.test(ch))
+		.map(ch => ch.toLowerCase())
+		.join('')
+}
+
+export function NameGuessModal({
+	open,
+	onClose,
+	onSubmit,
+	cardName,
+	guessed
+}: {
+	open: boolean
+	onClose: () => void
+	onSubmit: (value: string) => void
+	cardName: string
+	guessed: Set<string>
+}) {
+	const [value, setValue] = useState('')
+	const inputRef = useRef<HTMLInputElement | null>(null)
+
+	// Focus input when modal opens
+	useEffect(() => {
+		if (open) {
+			setTimeout(() => inputRef.current?.focus(), 0)
+		} else {
+			setValue('')
+		}
+	}, [open])
+
+	// Group contiguous slots into word groups so the UI wraps per-word
+	interface Slot {
+		raw: string
+		lower: string
+	}
+	interface WordGroup {
+		letters: Slot[]
+	}
+
+	const groups = useMemo<WordGroup[]>(() => {
+		const out: WordGroup[] = []
+		let current: Slot[] = []
+		for (const ch of cardName) {
+			if (ALNUM_RE.test(ch)) {
+				current.push({raw: ch, lower: ch.toLowerCase()})
+			} else if (ch === ' ') {
+				if (current.length > 0) out.push({letters: current})
+				current = []
+			}
+		}
+		if (current.length > 0) out.push({letters: current})
+		return out
+	}, [cardName])
+
+	const typedLetters = useMemo(() => {
+		return normalizeAlnum(value).toUpperCase().split('')
+	}, [value])
+
+	function submit() {
+		const trimmed = value.trim()
+		if (!trimmed) return
+		onSubmit(trimmed)
+	}
+
+	function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+		if (e.key === 'Enter') {
+			e.preventDefault()
+			submit()
+		}
+	}
+
+	// Allow letters, numbers, spaces, hyphen and apostrophes in the visible input
+	function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+		const next = e.target.value
+		const sanitized = next.replace(INPUT_SANITIZE_RE, '')
+		setValue(sanitized)
+	}
+
+	return (
+		<Dialog
+			onOpenChange={isOpen => {
+				if (!isOpen) onClose()
+			}}
+			open={open}
+		>
+			<DialogContent className='sm:max-w-lg'>
+				<DialogHeader>
+					<DialogTitle>Guess the card</DialogTitle>
+				</DialogHeader>
+				<div className='space-y-4'>
+					<div className='flex flex-col gap-2'>
+						<div className='relative'>
+							{/* Hidden-but-present input to capture text */}
+							<input
+								aria-label='Type the card name'
+								className='sr-only'
+								onChange={handleChange}
+								onKeyDown={onKeyDown}
+								ref={inputRef}
+								value={value}
+							/>
+							{/* Visual letter slots */}
+							<button
+								aria-label='Card name input slots (click to type)'
+								className='flex flex-wrap gap-y-2 rounded-md bg-slate-800 p-2'
+								onClick={() => inputRef.current?.focus()}
+								onKeyDown={() => inputRef.current?.focus()}
+								type='button'
+							>
+								{(() => {
+									let slotIndex = 0
+									return groups.map(g => {
+										const groupStart = slotIndex
+										const nodes = g.letters.map((t, li) => {
+											const typed = typedLetters[slotIndex++]
+											const hint = guessed.has(t.lower)
+												? t.raw.toUpperCase()
+												: ''
+											const show = typed ?? hint
+											const isHint = typed == null && Boolean(hint)
+											return (
+												<div
+													className='grid place-items-center h-10 w-8 sm:w-9 rounded-md bg-slate-300/80 text-slate-900 font-semibold select-none'
+													key={`slot-${groupStart + li}-${t.raw}-${t.lower}`}
+												>
+													<span className={isHint ? 'opacity-40' : ''}>
+														{show ?? ''}
+													</span>
+												</div>
+											)
+										})
+										return (
+											<div
+												className='mr-4 sm:mr-5 last:mr-0 flex whitespace-nowrap gap-2'
+												key={`grp-${groupStart}-${nodes.length}`}
+											>
+												{nodes}
+											</div>
+										)
+									})
+								})()}
+							</button>
+						</div>
+					</div>
+				</div>
+				<DialogFooter className='sm:justify-end'>
+					<Button onClick={onClose} variant='outline'>
+						Cancel
+					</Button>
+					<Button disabled={!value.trim()} onClick={submit}>
+						Submit
+					</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
+	)
+}
+
+// Named export only to satisfy project lint rules
+// (Avoid default export when exporting components.)

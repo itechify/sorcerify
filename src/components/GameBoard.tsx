@@ -2,18 +2,13 @@ import {
 	type ReactNode,
 	useCallback,
 	useEffect,
-	useId,
 	useMemo,
 	useRef,
 	useState
 } from 'react'
-import Select, {
-	type GroupBase,
-	type Props as SelectProps,
-	type SingleValue
-} from 'react-select'
 import type {Card} from '@/api/cards'
 import {Keyboard} from '@/components/Keyboard'
+import {NameGuessModal} from '@/components/NameGuessModal'
 import {ResultsModal} from '@/components/ResultsModal'
 import {SorceryCard} from '@/components/SorceryCard'
 import {Button} from '@/components/ui/button'
@@ -87,7 +82,7 @@ function isTypingInInput(target: HTMLElement | null): boolean {
 
 export function GameBoard({
 	card,
-	allCardNames,
+	allCardNames: _allCardNames,
 	persistKey,
 	onWin,
 	onLose,
@@ -146,25 +141,21 @@ export function GameBoard({
 		const entry = readCentralEntry()
 		return Boolean(entry?.hasWon)
 	})
-	const [nameGuessSelection, setNameGuessSelection] = useState<string>(() => {
-		const entry = readCentralEntry()
-		return entry?.nameGuessSelection ?? ''
-	})
+	// Modal state for guessing the full card name
+	const [nameGuessOpen, setNameGuessOpen] = useState<boolean>(false)
 	const nameGuessStatusTimeoutRef = useRef<number | null>(null)
 	const initialNameGuessed = (() => {
 		const entry = readCentralEntry()
 		return new Set<string>(entry?.nameGuessed ?? [])
 	})()
 	const nameGuessedRef = useRef<Set<string>>(initialNameGuessed)
-	const [nameGuessed, setNameGuessed] =
-		useState<Set<string>>(initialNameGuessed)
+	// Track previously guessed names via ref only; UI does not render them directly
 	const [results, setResults] = useState<Array<'correct' | 'incorrect'>>(() => {
 		const entry = readCentralEntry()
 		return entry?.results ?? []
 	})
 	const winReportedRef = useRef<boolean>(false)
 	const loseReportedRef = useRef<boolean>(false)
-	const id = useId()
 	// removed maskable token set; masking of fields is handled inside card rendering
 	const [resultsOpen, setResultsOpen] = useState<boolean>(false)
 
@@ -256,7 +247,6 @@ export function GameBoard({
 			const already = nameGuessedRef.current.has(nameValue)
 			if (!already) {
 				nameGuessedRef.current.add(nameValue)
-				setNameGuessed(prev => new Set(prev).add(nameValue))
 				if (nameValue === card.name) {
 					setHasWon(true)
 					setResults(prev => [...prev, 'correct'])
@@ -279,7 +269,6 @@ export function GameBoard({
 			remaining,
 			hasWon,
 			nameGuessed: Array.from(nameGuessedRef.current),
-			nameGuessSelection,
 			results
 		}
 		try {
@@ -292,16 +281,7 @@ export function GameBoard({
 		} catch {
 			// ignore quota or serialization errors
 		}
-	}, [
-		persistKey,
-		guessed,
-		correct,
-		incorrect,
-		remaining,
-		hasWon,
-		nameGuessSelection,
-		results
-	])
+	}, [persistKey, guessed, correct, incorrect, remaining, hasWon, results])
 
 	// Fire onWin once when winning state is reached
 	useEffect(() => {
@@ -317,73 +297,7 @@ export function GameBoard({
 		onLose?.()
 	}, [hasLost, onLose])
 
-	const nameOptions = useMemo(
-		() => allCardNames.map(n => ({value: n, label: n})),
-		[allCardNames]
-	)
-
-	// Filter out previously guessed names (removes incorrect guesses from dropdown)
-	const filteredNameOptions = useMemo(() => {
-		return nameOptions.filter(o => !nameGuessed.has(o.value))
-	}, [nameOptions, nameGuessed])
-
-	interface NameOption {
-		value: string
-		label: string
-	}
-
-	const selectStyles: SelectProps<
-		NameOption,
-		false,
-		GroupBase<NameOption>
-	>['styles'] = useMemo(
-		() => ({
-			control: (base, state) => ({
-				...base,
-				backgroundColor: '#ffffff',
-				borderColor: state.isFocused ? '#38bdf8' : '#cbd5e1',
-				boxShadow: state.isFocused
-					? '0 0 0 2px rgba(56, 189, 248, 0.5)'
-					: 'none',
-				':hover': {borderColor: '#94a3b8'},
-				minHeight: 38
-			}),
-			singleValue: base => ({
-				...base,
-				color: '#0f172a'
-			}),
-			input: base => ({
-				...base,
-				color: '#0f172a'
-			}),
-			placeholder: base => ({
-				...base,
-				color: '#64748b'
-			}),
-			menuPortal: base => ({...base, zIndex: 9999}),
-			menu: base => ({
-				...base,
-				backgroundColor: '#ffffff',
-				color: '#0f172a',
-				border: '1px solid #cbd5e1',
-				boxShadow:
-					'0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1)'
-			}),
-			option: (base, state) => {
-				let bg = '#ffffff'
-				if (state.isSelected) bg = '#e2e8f0'
-				else if (state.isFocused) bg = '#f1f5f9'
-				return {
-					...base,
-					color: state.isDisabled ? '#94a3b8' : '#0f172a',
-					backgroundColor: bg
-				}
-			},
-			dropdownIndicator: base => ({...base, color: '#334155'}),
-			indicatorSeparator: base => ({...base, backgroundColor: '#cbd5e1'})
-		}),
-		[]
-	)
+	const remainingAllowsNameGuess = remaining > 0
 
 	return (
 		<div className='mx-auto flex flex-col items-center gap-4 sm:gap-6 w-full max-w-3xl'>
@@ -470,40 +384,21 @@ export function GameBoard({
 				}
 				return (
 					<div className='flex items-center gap-3'>
-						<div className='rounded-md bg-black/40 px-3 py-1 font-semibold text-slate-100 text-sm'>
+						<div className='rounded-md bg-black/40 px-3 pt-1 font-semibold text-slate-100 text-sm'>
 							Guesses left: <span className='tabular-nums'>{remaining}</span>
 						</div>
 					</div>
 				)
 			})()}
-			<div className='flex flex-col sm:flex-row items-center gap-3 w-full'>
-				<div className='w-full'>
-					<Select<NameOption>
-						inputId={`${id}-name-guess`}
-						isDisabled={hasWon || remaining <= 0}
-						menuPortalTarget={document.body}
-						onChange={(opt: SingleValue<NameOption>) => {
-							const next = opt?.value ?? ''
-							setNameGuessSelection(next)
-						}}
-						options={filteredNameOptions}
-						placeholder='Select a card name'
-						styles={selectStyles}
-						value={
-							filteredNameOptions.find(o => o.value === nameGuessSelection) ??
-							null
-						}
-					/>
-				</div>
+			<div className='flex items-center justify-center gap-3 w-full'>
 				<Button
 					className='w-full sm:w-auto sm:flex-none whitespace-nowrap rounded-md border border-slate-300 bg-white cursor-pointer px-4 py-2 text-sm font-semibold text-slate-900 shadow hover:bg-slate-100 active:bg-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 disabled:opacity-50'
-					disabled={!nameGuessSelection || hasWon || remaining <= 0}
-					onClick={() => submitNameGuess(nameGuessSelection)}
+					disabled={hasWon || !remainingAllowsNameGuess}
+					onClick={() => setNameGuessOpen(true)}
 					type='button'
 				>
-					Guess name
+					Guess card
 				</Button>
-				{/* name guess status removed */}
 			</div>
 			<Keyboard
 				correct={correct}
@@ -519,6 +414,19 @@ export function GameBoard({
 				open={resultsOpen}
 				persistKey={persistKey}
 				results={results}
+			/>
+			<NameGuessModal
+				cardName={card.name}
+				guessed={guessed}
+				onClose={() => setNameGuessOpen(false)}
+				onSubmit={name => {
+					setNameGuessOpen(false)
+					// Only allow a name guess if at least one attempt remains
+					if (remaining > 0 && !hasWon) {
+						submitNameGuess(name)
+					}
+				}}
+				open={nameGuessOpen}
 			/>
 		</div>
 	)
