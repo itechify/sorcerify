@@ -85,11 +85,11 @@ html {
 		min-height: 44px;
 	}
 
-    /* Allow small positioned dialog close icon to size naturally */
-    [data-slot="dialog-close"] {
-        min-width: unset;
-        min-height: unset;
-    }
+	/* Allow small positioned dialog close icon to size naturally */
+	[data-slot="dialog-close"] {
+		min-width: unset;
+		min-height: unset;
+	}
 
 	/* Better text readability on small screens */
 	.text-sm {

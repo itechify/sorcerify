@@ -133,23 +133,31 @@ export function NameGuessModal({
 	}, [value])
 
 	// Determine if all visible slots are filled either by typed characters or hints
-	const totalSlots = useMemo(() => {
-		return groups.reduce(
-			(sum, group) => sum + group.letters.filter(l => l.kind === 'slot').length,
-			0
-		)
-	}, [groups])
+	const {totalSlots, coveredSlots} = useMemo(() => {
+		let slotIndex = 0
+		let total = 0
+		let covered = 0
 
-	const hintCount = useMemo(() => {
-		return groups.reduce((sum, group) => {
-			const groupHints = group.letters.reduce((acc, t) => {
-				return acc + (t.kind === 'slot' && guessed.has(t.lower) ? 1 : 0)
-			}, 0)
-			return sum + groupHints
-		}, 0)
-	}, [groups, guessed])
+		const incrementIfCovered = (letter: LetterSlot): void => {
+			const typedChar = typedLetters[slotIndex++]
+			if (typedChar != null && typedChar !== '') {
+				covered += 1
+				return
+			}
+			if (guessed.has(letter.lower)) covered += 1
+		}
 
-	const isAllSlotsCovered = typedLetters.length + hintCount >= totalSlots
+		for (const group of groups) {
+			for (const item of group.letters) {
+				if (item.kind === 'symbol') continue
+				total += 1
+				incrementIfCovered(item)
+			}
+		}
+		return {totalSlots: total, coveredSlots: covered}
+	}, [groups, typedLetters, guessed])
+
+	const isAllSlotsCovered = coveredSlots >= totalSlots
 
 	const isValueProvided = useMemo(() => Boolean(value.trim()), [value])
 	const isSubmitEnabled = isValueProvided && isAllSlotsCovered
