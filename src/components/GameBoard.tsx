@@ -29,6 +29,16 @@ function hasCircledDigit(text: string, digit: number): boolean {
 	return text.includes(String.fromCodePoint(codePoint))
 }
 
+// Normalize names for comparison: case-insensitive, diacritics removed, punctuation ignored
+function normalizeNameForComparison(name: string): string {
+	return name
+		.toLowerCase()
+		.normalize('NFKD')
+		.replace(/[\u0300-\u036f]/g, '')
+		.replace(/[’']/g, '')
+		.replace(/[^a-z0-9]/g, '')
+}
+
 function guessMatchesThreshold(normalized: string, card: Card): boolean {
 	if (!(THRESHOLD_TOKENS as readonly string[]).includes(normalized))
 		return false
@@ -146,7 +156,10 @@ export function GameBoard({
 	const nameGuessStatusTimeoutRef = useRef<number | null>(null)
 	const initialNameGuessed = (() => {
 		const entry = readCentralEntry()
-		return new Set<string>(entry?.nameGuessed ?? [])
+		// Store normalized names to avoid spacing/punctuation variants counting separately
+		const raw = new Set<string>(entry?.nameGuessed ?? [])
+		const normed = Array.from(raw).map(normalizeNameForComparison)
+		return new Set<string>(normed)
 	})()
 	const nameGuessedRef = useRef<Set<string>>(initialNameGuessed)
 	// Track previously guessed names via ref only; UI does not render them directly
@@ -244,10 +257,12 @@ export function GameBoard({
 	const submitNameGuess = useCallback(
 		(nameValue: string) => {
 			if (!nameValue || hasWon || remaining <= 0) return
-			const already = nameGuessedRef.current.has(nameValue)
+			const normalizedSubmitted = normalizeNameForComparison(nameValue)
+			const already = nameGuessedRef.current.has(normalizedSubmitted)
 			if (!already) {
-				nameGuessedRef.current.add(nameValue)
-				if (nameValue === card.name) {
+				nameGuessedRef.current.add(normalizedSubmitted)
+				const actual = normalizeNameForComparison(card.name)
+				if (normalizedSubmitted === actual) {
 					setHasWon(true)
 					setResults(prev => [...prev, 'correct'])
 				} else {

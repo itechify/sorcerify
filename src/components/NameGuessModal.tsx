@@ -99,9 +99,9 @@ export function NameGuessModal({
 			}}
 			open={open}
 		>
-			<DialogContent className='sm:max-w-lg'>
+			<DialogContent className='sm:max-w-2xl md:max-w-3xl'>
 				<DialogHeader>
-					<DialogTitle>Guess the card</DialogTitle>
+					<DialogTitle className='text-center'>Guess the card</DialogTitle>
 				</DialogHeader>
 				<div className='space-y-4'>
 					<div className='flex flex-col gap-2'>
@@ -118,7 +118,7 @@ export function NameGuessModal({
 							{/* Visual letter slots */}
 							<button
 								aria-label='Card name input slots (click to type)'
-								className='flex flex-wrap gap-y-2 rounded-md bg-slate-800 p-2'
+								className='flex flex-wrap gap-y-2 rounded-md bg-slate-800 p-2 mx-auto'
 								onClick={() => inputRef.current?.focus()}
 								onKeyDown={() => inputRef.current?.focus()}
 								type='button'
@@ -147,7 +147,7 @@ export function NameGuessModal({
 										})
 										return (
 											<div
-												className='mr-4 sm:mr-5 last:mr-0 flex whitespace-nowrap gap-2'
+												className='mr-4 sm:mr-5 last:mr-0 flex flex-wrap gap-2'
 												key={`grp-${groupStart}-${nodes.length}`}
 											>
 												{nodes}
@@ -159,7 +159,7 @@ export function NameGuessModal({
 						</div>
 					</div>
 				</div>
-				<DialogFooter className='sm:justify-end'>
+				<DialogFooter className='sm:justify-center'>
 					<Button onClick={onClose} variant='outline'>
 						Cancel
 					</Button>
