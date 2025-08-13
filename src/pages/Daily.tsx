@@ -200,6 +200,7 @@ export function Daily() {
 					</p>
 					<GameBoard
 						allCardNames={allCardNames}
+						autoOpenResultsOnWin={true}
 						card={card}
 						key={todayKey}
 						onLose={handleLoseToday}

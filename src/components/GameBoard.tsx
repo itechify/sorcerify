@@ -96,7 +96,8 @@ export function GameBoard({
 	persistKey,
 	onWin,
 	onLose,
-	endOfRoundAction
+	endOfRoundAction,
+	autoOpenResultsOnWin
 }: {
 	card: Card
 	allCardNames: string[]
@@ -104,6 +105,7 @@ export function GameBoard({
 	onWin?: () => void
 	onLose?: () => void
 	endOfRoundAction?: ReactNode
+	autoOpenResultsOnWin?: boolean
 }) {
 	// Centralized storage key; each game's state is stored under a sub-key
 	const centralStorageKey = 'sorcerify:progress'
@@ -210,6 +212,16 @@ export function GameBoard({
 	)
 	const hasLost = remaining <= 0 && !hasWon
 
+	const cardImageUrl = useMemo(() => {
+		const slug = card.sets?.[0]?.variants?.[0]?.slug ?? ''
+		const underscoreIndex = slug.indexOf('_')
+		const trimmed =
+			underscoreIndex >= 0 ? slug.slice(underscoreIndex + 1) : slug
+		return trimmed
+			? `https://pub-729c423a963d465da8b2e38d53709f27.r2.dev/${trimmed}.png`
+			: null
+	}, [card])
+
 	// Key handling effect is declared after handlePress to satisfy linter ordering
 
 	const handlePress = useCallback(
@@ -265,13 +277,14 @@ export function GameBoard({
 				if (normalizedSubmitted === actual) {
 					setHasWon(true)
 					setResults(prev => [...prev, 'correct'])
+					if (autoOpenResultsOnWin) setResultsOpen(true)
 				} else {
 					setResults(prev => [...prev, 'incorrect'])
 				}
 				setRemaining(prev => Math.max(0, prev - 1))
 			}
 		},
-		[card.name, hasWon, remaining]
+		[autoOpenResultsOnWin, card.name, hasWon, remaining]
 	)
 
 	// Persist state to centralized localStorage map whenever it changes
@@ -424,6 +437,7 @@ export function GameBoard({
 
 			<ResultsModal
 				cardName={card.name}
+				{...(cardImageUrl ? {cardImageUrl} : {})}
 				hasWon={hasWon}
 				onClose={() => setResultsOpen(false)}
 				open={resultsOpen}

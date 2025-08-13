@@ -16,7 +16,8 @@ export function ResultsModal({
 	hasWon,
 	results,
 	persistKey,
-	cardName
+	cardName,
+	cardImageUrl
 }: {
 	open: boolean
 	onClose: () => void
@@ -24,6 +25,7 @@ export function ResultsModal({
 	results: GuessResult[]
 	persistKey?: string | undefined
 	cardName: string
+	cardImageUrl?: string
 }) {
 	const [copied, setCopied] = useState<boolean>(false)
 
@@ -66,6 +68,17 @@ export function ResultsModal({
 				</DialogHeader>
 				<div className='space-y-4'>
 					<p className='text-sm'>{hasWon ? 'You won!' : 'You lost 😔'}</p>
+					{cardImageUrl ? (
+						<div className='w-full flex justify-center'>
+							<img
+								alt={cardName}
+								className='h-auto max-h-[420px] w-full max-w-sm rounded-md object-contain'
+								height={512}
+								src={cardImageUrl}
+								width={384}
+							/>
+						</div>
+					) : null}
 					<div className='rounded-md border bg-background/60 p-3'>
 						<p className='font-semibold mb-2'>{cardName}</p>
 						<div className='flex gap-1 text-xl select-none'>
