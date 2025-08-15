@@ -14,6 +14,139 @@ import {SorceryCard} from '@/components/SorceryCard'
 import {Button} from '@/components/ui/button'
 import {WinSparkles} from '@/components/WinSparkles'
 
+function CardVisual({
+	card,
+	guessed,
+	hasWon,
+	hasLost,
+	cardImageUrl
+}: {
+	card: Card
+	guessed: Set<string>
+	hasWon: boolean
+	hasLost: boolean
+	cardImageUrl: string | null
+}) {
+	const isSite = card.guardian.type === 'Site'
+	const wrapperSizeClasses =
+		isSite && !((hasWon || hasLost) && cardImageUrl)
+			? 'w-full max-w-sm sm:max-w-[531px]'
+			: 'w-full max-w-[275px] sm:max-w-[380px]'
+	return (
+		<div
+			className={`relative ${wrapperSizeClasses} rounded-3xl overflow-hidden`}
+		>
+			{(hasWon || hasLost) && cardImageUrl ? (
+				<div
+					className='relative w-full'
+					style={{
+						aspectRatio: '380/531'
+					}}
+				>
+					<img
+						alt={card.name}
+						className='absolute inset-0 h-full w-full object-contain'
+						height={531}
+						src={cardImageUrl}
+						width={380}
+					/>
+				</div>
+			) : (
+				<SorceryCard
+					card={card}
+					guessed={guessed}
+					revealAll={Boolean(hasWon || hasLost)}
+				/>
+			)}
+			<WinSparkles active={hasWon} />
+			{hasWon && (
+				<div className='pointer-events-none absolute inset-0 grid place-items-center rounded-3xl'>
+					<span className='rounded-full bg-green-700/80 px-4 py-2 font-bold text-lg text-white shadow'>
+						You win!
+					</span>
+				</div>
+			)}
+			{hasLost && (
+				<div className='pointer-events-none absolute inset-0 grid place-items-center rounded-3xl'>
+					<span className='rounded-full bg-red-700/80 px-4 py-2 font-bold text-lg text-white shadow'>
+						You lose!
+					</span>
+				</div>
+			)}
+		</div>
+	)
+}
+
+function GuessProgressBar({
+	results
+}: {
+	results: Array<'correct' | 'incorrect'>
+}) {
+	const segmentColor = (r: 'correct' | 'incorrect' | null): string => {
+		if (r === 'correct') return 'bg-emerald-500'
+		if (r === 'incorrect') return 'bg-red-500'
+		return 'bg-slate-600/50'
+	}
+	const total = 7
+	const segments = Array.from({length: total}, (_, i) => results[i] ?? null)
+	const positions = Array.from({length: total}, (_, i) => `pos-${i}`)
+	return (
+		<div className='w-full max-w-md px-2'>
+			<div className='flex gap-1'>
+				{positions.map((pos, i) => (
+					<div
+						className={`h-2 flex-1 rounded-sm ${segmentColor(segments[i] ?? null)}`}
+						key={pos}
+					/>
+				))}
+			</div>
+		</div>
+	)
+}
+
+function EndOfRoundActions({
+	hasWon,
+	hasLost,
+	persistKey,
+	onOpenResults,
+	endOfRoundAction,
+	remaining
+}: {
+	hasWon: boolean
+	hasLost: boolean
+	persistKey?: string
+	onOpenResults: () => void
+	endOfRoundAction?: ReactNode
+	remaining: number
+}) {
+	if (hasWon || hasLost) {
+		if (persistKey) {
+			return (
+				<div className='flex items-center gap-3'>
+					<Button
+						className='rounded-md border border-slate-300 bg-white cursor-pointer px-3 py-1 font-semibold text-slate-900 text-sm shadow hover:bg-slate-100 active:bg-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400'
+						onClick={onOpenResults}
+						type='button'
+					>
+						Results
+					</Button>
+				</div>
+			)
+		}
+		if (endOfRoundAction) {
+			return <div className='flex items-center gap-3'>{endOfRoundAction}</div>
+		}
+		return null
+	}
+	return (
+		<div className='flex items-center gap-3'>
+			<div className='rounded-md bg-black/40 px-3 pt-1 font-semibold text-slate-100 text-sm'>
+				Guesses left: <span className='tabular-nums'>{remaining}</span>
+			</div>
+		</div>
+	)
+}
+
 // Top-level constants for performance (linter preference)
 // Threshold tokens used for guessing/searching
 const THRESHOLD_TOKENS = ['air', 'earth', 'fire', 'water'] as const
@@ -330,94 +463,23 @@ export function GameBoard({
 	return (
 		<div className='mx-auto flex flex-col items-center gap-4 sm:gap-6 w-full max-w-3xl'>
 			<div className='w-full flex justify-center'>
-				{(() => {
-					const isSite = card.guardian.type === 'Site'
-					const wrapperSizeClasses = isSite
-						? 'w-full max-w-sm sm:max-w-md md:max-w-lg'
-						: 'w-full max-w-[275px] sm:max-w-[320px] md:max-w-[366px]'
-					return (
-						<div
-							className={`relative ${wrapperSizeClasses} rounded-3xl overflow-hidden`}
-						>
-							<SorceryCard
-								card={card}
-								guessed={guessed}
-								revealAll={Boolean(hasWon || hasLost)}
-							/>
-							<WinSparkles active={hasWon} />
-							{hasWon && (
-								<div className='pointer-events-none absolute inset-0 grid place-items-center rounded-3xl'>
-									<span className='rounded-full bg-green-700/80 px-4 py-2 font-bold text-lg text-white shadow'>
-										You win!
-									</span>
-								</div>
-							)}
-							{hasLost && (
-								<div className='pointer-events-none absolute inset-0 grid place-items-center rounded-3xl'>
-									<span className='rounded-full bg-red-700/80 px-4 py-2 font-bold text-lg text-white shadow'>
-										You lose!
-									</span>
-								</div>
-							)}
-						</div>
-					)
-				})()}
+				<CardVisual
+					card={card}
+					cardImageUrl={cardImageUrl}
+					guessed={guessed}
+					hasLost={hasLost}
+					hasWon={hasWon}
+				/>
 			</div>
-			{(() => {
-				const segmentColor = (r: 'correct' | 'incorrect' | null): string => {
-					if (r === 'correct') return 'bg-emerald-500'
-					if (r === 'incorrect') return 'bg-red-500'
-					return 'bg-slate-600/50'
-				}
-				const total = 7
-				const segments = Array.from(
-					{length: total},
-					(_, i) => results[i] ?? null
-				)
-				const positions = Array.from({length: total}, (_, i) => `pos-${i}`)
-				return (
-					<div className='w-full max-w-md px-2'>
-						<div className='flex gap-1'>
-							{positions.map((pos, i) => (
-								<div
-									className={`h-2 flex-1 rounded-sm ${segmentColor(segments[i] ?? null)}`}
-									key={pos}
-								/>
-							))}
-						</div>
-					</div>
-				)
-			})()}
-			{(() => {
-				if (hasWon || hasLost) {
-					if (persistKey) {
-						return (
-							<div className='flex items-center gap-3'>
-								<Button
-									className='rounded-md border border-slate-300 bg-white cursor-pointer px-3 py-1 font-semibold text-slate-900 text-sm shadow hover:bg-slate-100 active:bg-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400'
-									onClick={() => setResultsOpen(true)}
-									type='button'
-								>
-									Results
-								</Button>
-							</div>
-						)
-					}
-					if (endOfRoundAction) {
-						return (
-							<div className='flex items-center gap-3'>{endOfRoundAction}</div>
-						)
-					}
-					return null
-				}
-				return (
-					<div className='flex items-center gap-3'>
-						<div className='rounded-md bg-black/40 px-3 pt-1 font-semibold text-slate-100 text-sm'>
-							Guesses left: <span className='tabular-nums'>{remaining}</span>
-						</div>
-					</div>
-				)
-			})()}
+			<GuessProgressBar results={results} />
+			<EndOfRoundActions
+				endOfRoundAction={endOfRoundAction}
+				hasLost={hasLost}
+				hasWon={hasWon}
+				onOpenResults={() => setResultsOpen(true)}
+				{...(persistKey ? {persistKey} : {})}
+				remaining={remaining}
+			/>
 			<div className='flex items-center justify-center gap-3 w-full'>
 				<Button
 					className='w-full sm:w-auto sm:flex-none whitespace-nowrap rounded-md border border-slate-300 bg-white cursor-pointer px-4 py-2 text-sm font-semibold text-slate-900 shadow hover:bg-slate-100 active:bg-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 disabled:opacity-50'
