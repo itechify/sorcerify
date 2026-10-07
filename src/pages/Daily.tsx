@@ -187,11 +187,11 @@ export function Daily() {
 						<circle cx='12' cy='8' fill='#0f172a' r='1.25' />
 					</svg>
 				</Button>
-				<div className='mx-auto flex flex-col items-center gap-2 w-full max-w-3xl'>
+				<div className='mx-auto flex flex-col items-center gap-2 w-full max-w-5xl'>
 					<img
 						alt='Sorcerify'
-						className='h-auto w-full max-w-md'
-						height='120'
+						className='h-auto w-24 sm:w-32'
+						height='280'
 						src='/logo.png'
 						width='420'
 					/>
@@ -207,8 +207,8 @@ export function Daily() {
 						onWin={handleWinToday}
 						persistKey={todayKey}
 					/>
-					<p className='text-xs text-slate-500 text-center'>
-						Come back tomorrow for a new daily card.
+					<p className='text-xs text-slate-400 text-center'>
+						Next daily card at 00:00 UTC. Progress is saved on this device.
 					</p>
 				</div>
 			</div>

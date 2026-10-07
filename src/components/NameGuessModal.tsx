@@ -1,186 +1,53 @@
-import {type ReactNode, useEffect, useMemo, useRef, useState} from 'react'
+import {useEffect, useId, useState} from 'react'
+import type {Card} from '@/api/cards'
+import {CardClues} from '@/components/SorceryCard'
 import {Button} from '@/components/ui/button'
 import {
 	Dialog,
 	DialogContent,
+	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle
 } from '@/components/ui/dialog'
 
-const ALNUM_RE = /[a-zA-Z0-9]/
-const INPUT_SANITIZE_RE = /[^a-zA-Z0-9 ' -]/g
+const NON_ALNUM_RE = /[^a-z0-9]/g
+const DIACRITICS_RE = /[\u0300-\u036f]/g
 
-function normalizeAlnum(s: string): string {
-	return s
-		.split('')
-		.filter(ch => ALNUM_RE.test(ch))
-		.map(ch => ch.toLowerCase())
-		.join('')
+function letterCount(value: string): number {
+	return value
+		.toLowerCase()
+		.normalize('NFKD')
+		.replace(DIACRITICS_RE, '')
+		.replace(NON_ALNUM_RE, '').length
 }
 
 export function NameGuessModal({
 	open,
 	onClose,
 	onSubmit,
-	cardName,
+	onReturnFocus,
+	card,
 	guessed
 }: {
 	open: boolean
 	onClose: () => void
 	onSubmit: (value: string) => void
-	cardName: string
+	onReturnFocus: () => void
+	card: Card
 	guessed: Set<string>
 }) {
 	const [value, setValue] = useState('')
-	const inputRef = useRef<HTMLInputElement | null>(null)
+	const inputId = useId()
+	const hintId = useId()
+	const count = letterCount(value)
+	const expectedCount = letterCount(card.name)
+	const tooLong = count > expectedCount
+	const canSubmit = count === expectedCount && count > 0
 
-	// Focus input when modal opens
 	useEffect(() => {
-		if (open) {
-			setTimeout(() => inputRef.current?.focus(), 0)
-		} else {
-			setValue('')
-		}
+		if (!open) setValue('')
 	}, [open])
-
-	// Group contiguous slots into word groups so the UI wraps per-word.
-	// Letter slots are guessable. Symbols like hyphens/apostrophes are auto-filled.
-	interface LetterSlot {
-		kind: 'slot'
-		raw: string
-		lower: string
-	}
-	interface SymbolSlot {
-		kind: 'symbol'
-		char: string
-	}
-	type Slot = LetterSlot | SymbolSlot
-	interface WordGroup {
-		letters: Slot[]
-	}
-
-	function renderNameSlots(
-		wordGroups: WordGroup[],
-		typed: string[],
-		guessedSet: Set<string>
-	): ReactNode[] {
-		let slotIndex = 0
-		return wordGroups.map(g => {
-			const groupStart = slotIndex
-			const nodes = g.letters.map((t, li) => {
-				if (t.kind === 'symbol') {
-					return (
-						<div
-							className='grid place-items-center h-10 w-8 sm:w-9 rounded-md bg-slate-300/60 text-slate-900 font-semibold select-none'
-							key={`sym-${groupStart + li}-${t.char}`}
-						>
-							<span className='opacity-60'>{t.char}</span>
-						</div>
-					)
-				}
-
-				const typedChar = typed[slotIndex++]
-				const hint = guessedSet.has(t.lower) ? t.raw.toUpperCase() : ''
-				const show = typedChar ?? hint
-				const isHint = typedChar == null && Boolean(hint)
-				return (
-					<div
-						className='grid place-items-center h-10 w-8 sm:w-9 rounded-md bg-slate-300/80 text-slate-900 font-semibold select-none'
-						key={`slot-${groupStart + li}-${t.raw}-${t.lower}`}
-					>
-						<span className={isHint ? 'opacity-40' : ''}>{show ?? ''}</span>
-					</div>
-				)
-			})
-			return (
-				<div
-					className='mr-4 sm:mr-5 last:mr-0 flex flex-wrap gap-2'
-					key={`grp-${groupStart}-${nodes.length}`}
-				>
-					{nodes}
-				</div>
-			)
-		})
-	}
-
-	const groups = useMemo<WordGroup[]>(() => {
-		const out: WordGroup[] = []
-		let current: Slot[] = []
-		const flush = () => {
-			if (current.length > 0) out.push({letters: current})
-			current = []
-		}
-		for (const ch of cardName) {
-			if (ALNUM_RE.test(ch)) {
-				current.push({kind: 'slot', raw: ch, lower: ch.toLowerCase()})
-				continue
-			}
-			if (ch === ' ') {
-				flush()
-				continue
-			}
-			if (ch === '-' || ch === "'" || ch === '’') {
-				current.push({kind: 'symbol', char: ch})
-			}
-		}
-		flush()
-		return out
-	}, [cardName])
-
-	const typedLetters = useMemo(() => {
-		return normalizeAlnum(value).toUpperCase().split('')
-	}, [value])
-
-	// Determine if all visible slots are filled either by typed characters or hints
-	const {totalSlots, coveredSlots} = useMemo(() => {
-		let slotIndex = 0
-		let total = 0
-		let covered = 0
-
-		const incrementIfCovered = (letter: LetterSlot): void => {
-			const typedChar = typedLetters[slotIndex++]
-			if (typedChar != null && typedChar !== '') {
-				covered += 1
-				return
-			}
-			if (guessed.has(letter.lower)) covered += 1
-		}
-
-		for (const group of groups) {
-			for (const item of group.letters) {
-				if (item.kind === 'symbol') continue
-				total += 1
-				incrementIfCovered(item)
-			}
-		}
-		return {totalSlots: total, coveredSlots: covered}
-	}, [groups, typedLetters, guessed])
-
-	const isAllSlotsCovered = coveredSlots >= totalSlots
-
-	const isValueProvided = useMemo(() => Boolean(value.trim()), [value])
-	const isSubmitEnabled = isValueProvided && isAllSlotsCovered
-
-	function submit() {
-		const trimmed = value.trim()
-		if (!isSubmitEnabled) return
-		onSubmit(trimmed)
-	}
-
-	function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-		if (e.key === 'Enter') {
-			e.preventDefault()
-			submit()
-		}
-	}
-
-	// Allow letters, numbers, spaces, hyphen and apostrophes in the visible input
-	function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-		const next = e.target.value
-		const sanitized = next.replace(INPUT_SANITIZE_RE, '')
-		setValue(sanitized)
-	}
 
 	return (
 		<Dialog
@@ -189,47 +56,59 @@ export function NameGuessModal({
 			}}
 			open={open}
 		>
-			<DialogContent className='sm:max-w-2xl md:max-w-3xl'>
+			<DialogContent
+				onCloseAutoFocus={event => {
+					event.preventDefault()
+					onReturnFocus()
+				}}
+			>
 				<DialogHeader>
-					<DialogTitle className='text-center'>Guess the card</DialogTitle>
+					<DialogTitle>Guess the card</DialogTitle>
+					<DialogDescription>
+						Type the complete card name, including revealed letters. A wrong
+						name uses one guess.
+					</DialogDescription>
 				</DialogHeader>
-				<div className='space-y-4'>
-					<div className='flex flex-col gap-2'>
-						<div className='relative'>
-							{/* Hidden-but-present input to capture text */}
-							<input
-								aria-label='Type the card name'
-								className='sr-only'
-								onChange={handleChange}
-								onKeyDown={onKeyDown}
-								ref={inputRef}
-								value={value}
-							/>
-							{/* Visual letter slots */}
-							<button
-								aria-label='Card name input slots (click to type)'
-								className='flex flex-wrap gap-y-2 rounded-md bg-slate-800 p-2 mx-auto'
-								onClick={() => inputRef.current?.focus()}
-								onKeyDown={() => inputRef.current?.focus()}
-								type='button'
-							>
-								{renderNameSlots(groups, typedLetters, guessed)}
-							</button>
-						</div>
+				<CardClues card={card} guessed={guessed} />
+				<form
+					className='grid gap-4'
+					onSubmit={event => {
+						event.preventDefault()
+						if (canSubmit) onSubmit(value.trim())
+					}}
+				>
+					<div className='grid gap-2'>
+						<label className='text-sm font-semibold' htmlFor={inputId}>
+							Card name
+						</label>
+						<input
+							aria-describedby={hintId}
+							aria-invalid={tooLong}
+							autoCapitalize='words'
+							autoComplete='off'
+							className='h-11 w-full min-w-0 rounded-md border border-input bg-background px-3 text-base text-foreground caret-foreground selection:bg-primary selection:text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400'
+							id={inputId}
+							maxLength={120}
+							onChange={event => setValue(event.target.value)}
+							spellCheck={false}
+							value={value}
+						/>
+						<p className='text-sm text-slate-400' id={hintId}>
+							{tooLong
+								? `This name has ${expectedCount} letters or numbers. Remove the extra characters to guess.`
+								: `Letters and numbers: ${count} of ${expectedCount}. Spaces and punctuation are optional.`}
+						</p>
 					</div>
-				</div>
-				<DialogFooter className='sm:justify-center'>
-					<Button onClick={onClose} variant='outline'>
-						Cancel
-					</Button>
-					<Button disabled={!isSubmitEnabled} onClick={submit}>
-						Submit
-					</Button>
-				</DialogFooter>
+					<DialogFooter>
+						<Button onClick={onClose} type='button' variant='outline'>
+							Cancel
+						</Button>
+						<Button disabled={!canSubmit} type='submit'>
+							Guess card
+						</Button>
+					</DialogFooter>
+				</form>
 			</DialogContent>
 		</Dialog>
 	)
 }
-
-// Named export only to satisfy project lint rules
-// (Avoid default export when exporting components.)

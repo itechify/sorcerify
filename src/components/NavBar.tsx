@@ -51,7 +51,7 @@ export function NavBar() {
 
 	return (
 		<header className='fixed top-0 left-0 right-0 z-30 backdrop-blur w-full'>
-			<div className='flex items-center justify-between px-4 py-3 w-full'>
+			<div className='flex items-center justify-between px-4 py-1.5 sm:py-3 w-full'>
 				<Link
 					className='flex items-center gap-2 text-lg font-semibold text-white'
 					to='/daily'

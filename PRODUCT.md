@@ -29,7 +29,7 @@ Instead of showing art, Sorcerify hides the card's text. A guess of a single let
 
 - **Daily** (primary mode): one deterministic card per UTC day. Wins increase the daily streak and losses reset it. Progress for the day is saved in `localStorage` (`sorcerify:progress`, `sorcerify:streak`, `sorcerify:lastWinDate`).
 - **Practice** (secondary mode): unlimited random cards with a win streak that lasts only for the session.
-- 7 guesses per round. A correct name wins immediately. A wrong name uses a guess and is removed from the name list. At zero guesses the round is lost and the full card is revealed.
+- 7 guesses per round; the final attempt is reserved for a name guess. Players type the complete card name, with spaces and punctuation optional. A correct name wins immediately; a wrong name uses one guess, and repeating a name costs no extra guess. At zero guesses the round is lost and the full card is revealed.
 - Free, with no accounts and no backend. All player state stays on the device. This is a standing constraint.
 - Card data comes from static JSON (`src/mocks/data/cards.json`) and is validated with valibot. Card images load from an external R2 bucket by variant slug.
 - The share format is fixed: `Sorcerify <date key>`, then a row of result squares (🟩/🟥 for each guess, ending in ✅ or ❌), then `https://sorcerify.com`. Players rely on it, so don't change it.
