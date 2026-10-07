@@ -20,6 +20,8 @@ colors:
   dusk-caption: "oklch(70.4% 0.04 256.788)"
   reveal-green: "oklch(62.7% 0.194 149.214)"
   miss-red: "oklch(57.7% 0.245 27.325)"
+  key-hit-green: "oklch(52.7% 0.154 150.069)"
+  key-miss-red: "oklch(50.5% 0.213 27.518)"
   meter-hit: "oklch(69.6% 0.17 162.48)"
   meter-miss: "oklch(63.7% 0.237 25.331)"
   meter-empty: "oklch(44.6% 0.043 257.281 / 50%)"
@@ -98,10 +100,10 @@ components:
     rounded: "{rounded.md}"
     size: "40px"
   key-tile-hit:
-    backgroundColor: "{colors.reveal-green}"
+    backgroundColor: "{colors.key-hit-green}"
     textColor: "{colors.bone-white}"
   key-tile-miss:
-    backgroundColor: "{colors.miss-red}"
+    backgroundColor: "{colors.key-miss-red}"
     textColor: "{colors.bone-white}"
   streak-chip:
     backgroundColor: "{colors.tile-ink}"
@@ -124,12 +126,11 @@ components:
     textColor: "{colors.moonlight}"
     rounded: "{rounded.lg}"
     padding: "24px"
-  name-slot:
-    backgroundColor: "{colors.bone-tile}"
-    textColor: "{colors.tile-ink}"
+  name-input:
+    backgroundColor: "{colors.midnight-table}"
+    textColor: "{colors.moonlight}"
     rounded: "{rounded.md}"
-    height: "40px"
-    width: "36px"
+    height: "44px"
 ---
 
 # Design System: Sorcerify
@@ -140,7 +141,7 @@ components:
 
 Sorcerify is a dark table lit by a single focus. In the middle of the room is one veiled card, its text hidden behind blanks, and the player leans in to read it by candlelight. Everything around the card is near-black, neutral and quiet. The page chrome takes no part in the magic. It holds the card, counts the guesses and gets out of the way. The arcane mood comes from three things the system does not draw itself: the Sorcerify logo, the dimmed Sorcery card back behind the masked card, and the four elemental threshold icons. The UI's job is to frame them, not compete with them.
 
-The density is that of a single-column game board: the logo, the date, the card, the guess meter, the guess button, the keyboard. There's one decision on screen at a time, read top to bottom. The interface currently ships dark only (the `dark` class is hardcoded on `<html>`; the light tokens in `:root` are never shown), and the neutral tokens have zero chroma, so the only colour a player sees comes from the card itself and from feedback: green for a reveal, red for a miss. The pale bone tiles of the keyboard sit on the table like physical game pieces. They are the brightest objects after the card, because they are what the player touches.
+The board is compact and single-column on phones, with the card beside its controls from 1024px. A small logo and date orient the player without displacing the game. There's one decision on screen at a time. The interface ships dark only (the `dark` class is hardcoded on `<html>`), and the neutral tokens have zero chroma, so colour comes from the card and feedback: green for a reveal, red for a miss. The pale bone keyboard tiles sit on the table like physical game pieces.
 
 Bright, busy chrome is rejected. No gradients, glows or neon on navigation, buttons, panels or backgrounds. Two things are allowed to sparkle. The logo is a brand asset and stays as drawn. The win burst is feedback, and it happens once.
 
@@ -157,7 +158,7 @@ Bright, busy chrome is rejected. No gradients, glows or neon on navigation, butt
 The palette is a neutral, zero-chroma night with a cold blue-black card at its centre. Saturated colour is reserved for game feedback.
 
 ### Primary
-- **Bone Tile** (`oklch(92.9% 0.013 255.508)`): the face of every unplayed keyboard key and every letter slot in the name-guess dialog. It is the "game piece" colour: the brightest thing after the card, because it's what the player touches.
+- **Bone Tile** (`oklch(92.9% 0.013 255.508)`): the face of every unplayed keyboard key. It is the "game piece" colour: the brightest thing after the card, because it's what the player touches.
 - **Bone White** (`#ffffff`): the "Guess card", "Results" and "Next Card" action buttons, with a thin slate-300 rim. These are the decisive moves in a round, so they get the purest light.
 - **Tile Ink** (`oklch(20.8% 0.042 265.755)`): text on bone tiles and bone buttons. It's also the background of the navbar streak chip.
 
@@ -174,7 +175,7 @@ The palette is a neutral, zero-chroma night with a cold blue-black card at its c
 - **Midnight Table** (`oklch(0.145 0 0)`): the page and dialog background. Everything sits on it.
 - **Table Raised** (`oklch(0.269 0 0)`): hover fill for ghost buttons and the secondary button surface.
 - **Moonlight** (`oklch(0.985 0 0)`): default foreground text and inactive nav labels.
-- **Pale Lamp** (`oklch(0.922 0 0)`) on **Lamp Ink** (`oklch(0.205 0 0)`): the default button. In practice that's the active nav pill and the Submit button in the name-guess dialog.
+- **Pale Lamp** (`oklch(0.922 0 0)`) on **Lamp Ink** (`oklch(0.205 0 0)`): the default button, used for the active nav pill and the name dialog's Guess card button.
 - **Ash** (`oklch(0.708 0 0)`): muted copy such as dialog descriptions.
 - **Dusk Caption** (`oklch(70.4% 0.04 256.788)`): small captions such as "Daily card for 2026-10-06 (UTC)".
 - **Hairline** (`oklch(1 0 0 / 10%)`): default borders on dialogs and outline buttons.
@@ -200,6 +201,8 @@ The palette is a neutral, zero-chroma night with a cold blue-black card at its c
 - **Body** (400, 14px, line-height 1.5): instructions, dialog copy, button labels (500).
 - **Label** (600, 14px, tabular numerals): "Guesses left: 4" and the bone action buttons.
 - **Caption** (400–600, 12px): the date line, "Come back tomorrow" and the streak chip.
+- **Name input** (400, 16px): visible, editable complete-name entry; 16px avoids phone focus zoom.
+- **Inline cost numerals** (10px → 11px from 640px): a narrow exception inside 16px → 20px cost coins, rather than a general text size.
 
 ### Named Rules
 **The Tabular Count Rule.** Every number that changes during play (guesses left, streaks, cost, life, attack/defence) uses tabular numerals, so the layout never jitters as values tick.
@@ -208,14 +211,14 @@ The palette is a neutral, zero-chroma night with a cold blue-black card at its c
 
 ## Layout
 
-There's a single centred column, `max-width: 48rem` (768px), with 16px side padding, under a fixed navbar about 56px tall (`--navbar-height`). The navbar is transparent with a backdrop blur, holding the logo on the left and the Daily/Practice tabs plus the streak chip on the right.
+There's a centred board, `max-width: 64rem` (1024px), with 16px side padding, under a fixed navbar about 56px tall (`--navbar-height`). The navbar is transparent with a backdrop blur, holding the logo on the left and the Daily/Practice tabs plus the streak chip on the right.
 
-From top to bottom, the board is: logo (max 448px wide), date caption, the masked card, the 7-segment guess meter (max 448px), the guesses-left chip or end-of-round action, the "Guess card" button, the keyboard, and a closing caption. Vertical gap is 16px on mobile and 24px from 640px.
+On phones, the board is: logo (96px wide, 128px from 640px), date, card, guess meter, remaining count, outcome feedback, Guess card, keyboard, and closing caption. The header and control groups use 8px gaps; card-to-controls separation is 12px. From 1024px, the card and vertically centred controls sit side by side with a 32px gap. Completed rounds replace input controls with the answer and Results; Practice also offers Next Card.
 
 - **Card sizing:** portrait cards are max 275px wide on mobile and 380px from 640px, in a fixed `380 / 531` aspect ratio. Site cards turn landscape (`531 / 380`), max 384px on mobile and 531px from 640px.
-- **Keyboard:** three wrapping, centred rows: A–Z, 0–9, then the four threshold tiles. Gap is 4px on mobile and 8px from 640px.
-- **Touch targets:** below 640px every `button` and `[role="button"]` is forced to at least 44 × 44px, which turns the keyboard into larger, wrapped rows on phones. The dialog close icon is the one exemption.
-- **Breakpoints:** `sm` 640px is the main switch (key, card and text sizes, navbar labels). `md` 768px only widens the name-guess dialog.
+- **Keyboard:** two wrapping, centred groups: A–Z, then numbers and elemental thresholds. Key gaps are 4px on mobile and 8px from 640px; group separation is 8px.
+- **Touch targets:** below 640px buttons, navigation links and dialog footer links are at least 44 × 44px. Dialog Close is 44px at every size.
+- **Breakpoints:** `sm` 640px changes key, card and text sizes and navbar labels; `lg` 1024px places the card beside its controls.
 - **Spacing rhythm:** a 4px base step (Tailwind's scale), used mostly at 4/8/12/16/24px.
 
 ## Elevation & Depth
@@ -250,15 +253,15 @@ Card internals copy a real card's layout: a cost coin plus threshold icons top-l
 Tactile game pieces. Solid, pale, and unmistakably pressable against the dark table.
 - **Shape:** gently rounded pieces (8px).
 - **Bone action** ("Guess card", "Results", "Next Card"): Bone White fill, Tile Ink 600 label, thin slate-300 rim, Piece press shadow, `8px 16px` padding. Hover drops to slate-100 and active to slate-200. The focus outline is Focus Sky (2px, 2px offset). Full width on mobile, natural width from 640px.
-- **Primary** (shadcn default): Pale Lamp on Lamp Ink, 36px tall. Used for the active nav tab (32px "sm") and the dialog Submit button. Hover lowers it to 90% opacity.
+- **Primary** (shadcn default): Pale Lamp on Lamp Ink, 36px tall. Used for the active nav tab (32px "sm") and the name dialog's Guess card button. Phone touch targets are raised to 44px. Hover lowers it to 90% opacity.
 - **Ghost:** transparent, Moonlight label. Hover fills with Table Raised at 50%. Used for inactive nav tabs.
 - **Outline:** a hairline border over a translucent input fill, used for Cancel and Share.
 - **Disabled:** 50% opacity and no pointer events.
 
 ### Keyboard keys (signature)
 - **Unplayed:** Bone Tile face, Tile Ink 500 label, 40px square (32px on mobile, then raised to 44px by the touch-target rule). Hover goes to slate-300 and press to slate-400.
-- **Revealed:** solid Reveal Green, white label, disabled.
-- **Missed:** solid Miss Red, white label, disabled. Because played keys are disabled, they render at 50% opacity and look darker than the raw token.
+- **Revealed:** green-700 (Key Hit Green), white label and check mark, disabled.
+- **Missed:** red-700 (Key Miss Red), white label and cross, disabled. Played keys inherit Button's 50% disabled opacity. Both states include accessible outcome descriptions and tooltips.
 - **Locked** (round won, or only the final name guess left): slate-300 face, slate-500 label.
 - **Threshold keys:** the same tile with the element PNG (16px → 20px) in place of a letter, labelled "air/earth/fire/water threshold".
 - Colour changes use a plain `transition-colors`. There's no bounce or flip.
@@ -271,30 +274,33 @@ Tactile game pieces. Solid, pale, and unmistakably pressable against the dark ta
 - **End of round:** the masked rendering is swapped for the official card image (same aspect ratio). A pill banner ("You win!" in green-700/80 or "You lose!" in red-700/80, 18px bold) is centred over it.
 
 ### Guess meter
-Seven equal segments, 8px tall, 4px apart, 6px corners, max 448px wide. Segments fill left to right in Meter Hit or Meter Miss as guesses are spent, and the rest stay Meter Empty. It's the visual twin of the emoji share row.
+Seven equal segments, 16px tall, 4px apart, 6px corners, max 448px wide. Hit/miss segments include a check/cross as well as colour; an ordered list exposes each outcome accessibly. A polite live status reports guesses and explains the final-name-only restriction.
 
 ### Chips
 - **Streak chip** (navbar): Tile Ink background, white 12px semibold label, `4px 8px`, 8px corners. It reads "Daily Streak: n" from 640px and "Streak: n" below that.
-- **Guesses-left chip:** black at 40% opacity, slate-100 label, 8px corners.
+- **Guesses-left count:** plain slate-100 semibold text with tabular numerals, grouped with the meter.
 - **Practice streak:** green-600 at 10% opacity, green-200 label. This is the one place chrome borrows the feedback hue, because it reports a win count.
 
 ### Dialogs
-Midnight Table surface, hairline border, 10px corners, 24px padding, max 512px wide (the name-guess dialog widens to 672px, then 768px from 768px). They sit on a 50% black scrim. Opening and closing fade with a 95% zoom over 200ms. The close button is a 32px (36px from 640px) ghost square at 70% opacity, rising to 100% on hover.
+Midnight Table surface, hairline border, 10px corners, 24px internal padding, max 512px wide. Height is bounded to the dynamic viewport minus 32px; the body scrolls independently while the 44px Close button stays fixed inside the frame. Titles reserve space for Close. Opening and closing fade with a 95% zoom over 200ms above a 50% black scrim.
 
-### Name-guess slots
-A slate-800 tray holding one Bone Tile slot (`bone-tile` at 80%, 40px × 32–36px, 8px corners) per letter, grouped into words that wrap together. Hyphens and apostrophes are pre-filled symbol slots at 60%. Letters already revealed on the card show as faint hints at 40% opacity until the player types over them. A visually hidden input captures what the player types.
+### Name guessing
+A visible, labelled 44px text field holds the complete name, with a normal caret and native editing. The masked name, cost/life, stats, thresholds, type and rules remain above it. Spaces, punctuation and accents follow the game's existing comparison rules. A letter/number count explains the required length; excess characters stay visible and prevent submission. Cancel and Guess card are explicit actions. Wrong and repeated guesses receive feedback on the board, and closing restores focus.
+
+### Sharing
+Results names the mode and offers the fixed emoji share string. A failed clipboard copy exposes selectable Share text and Try copy again; success is announced. The share format does not change.
 
 ### Navigation
-A fixed, transparent bar with a backdrop blur and `16px / 12px` padding. The logo mark (32px) and the "Sorcerify" wordmark in 18px semibold Moonlight appear on the left. The wordmark is hidden below 640px. The Daily/Practice tabs use the Primary "sm" style when active and Ghost when inactive.
+A fixed, transparent bar with a backdrop blur, 16px horizontal padding and 6px vertical padding on phones (12px from 640px). The 32px logo and 18px semibold wordmark appear on the left; the wordmark hides below 640px. Links have 44px phone touch targets without increasing the bar's 56px height.
 
 ### Win burst
 A single burst on the card when the player wins: 16 sparkle dots in random hues, 8 confetti bars and an emerald ring. Particles pop in over 120ms, then fly out over 880–950ms with `cubic-bezier(0.16, 1, 0.3, 1)`; the ring expands 3.2× over 900ms. It plays once, with no pointer events. It doesn't yet check `prefers-reduced-motion`.
+Its 2px confetti radius and `rgba(34, 197, 94, 0.9)` ring colour are intentional one-shot feedback exceptions, not chrome tokens.
 
 ### Known drift (recorded, not endorsed)
 - There are two focus treatments: shadcn primitives use a 3px ring at `ring / 50%`, while hand-styled buttons use the 2px Focus Sky outline.
 - The bone action buttons pass long utility strings on top of `Button` instead of a named variant, so their styling is duplicated across GameBoard and Practice.
 - The `theme-color` in `index.html` (`#0f172a`) and the `theme_color` in `manifest.webmanifest` (`#BD34FE`) don't match each other or the Midnight Table.
-- The closing caption uses slate-500 at 12px on Midnight Table, which is below 4.5:1 contrast.
 
 ## Do's and Don'ts
 

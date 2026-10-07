@@ -80,15 +80,11 @@ html {
 @media (max-width: 640px) {
 	/* Improve touch targets on mobile */
 	button,
-	[role="button"] {
+	[role="button"],
+	header a,
+	[data-slot="dialog-footer"] a {
 		min-width: 44px;
 		min-height: 44px;
-	}
-
-	/* Allow small positioned dialog close icon to size naturally */
-	[data-slot="dialog-close"] {
-		min-width: unset;
-		min-height: unset;
 	}
 
 	/* Better text readability on small screens */

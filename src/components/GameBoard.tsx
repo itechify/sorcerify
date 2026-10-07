@@ -1,3 +1,4 @@
+import {Check, X} from 'lucide-react'
 import {
 	type ReactNode,
 	useCallback,
@@ -90,16 +91,25 @@ function GuessProgressBar({
 	const total = 7
 	const segments = Array.from({length: total}, (_, i) => results[i] ?? null)
 	const positions = Array.from({length: total}, (_, i) => `pos-${i}`)
+	const resultLabels = {correct: 'hit', incorrect: 'miss'}
 	return (
-		<div className='w-full max-w-md px-2'>
-			<div className='flex gap-1'>
+		<div className='w-full max-w-md'>
+			<ol aria-label='Guess history' className='flex gap-1'>
 				{positions.map((pos, i) => (
-					<div
-						className={`h-2 flex-1 rounded-sm ${segmentColor(segments[i] ?? null)}`}
+					<li
+						aria-label={`Guess ${i + 1}: ${segments[i] ? resultLabels[segments[i]] : 'unused'}`}
+						className={`h-4 flex flex-1 items-center justify-center rounded-sm text-slate-950 ${segmentColor(segments[i] ?? null)}`}
 						key={pos}
-					/>
+					>
+						{segments[i] === 'correct' && (
+							<Check aria-hidden='true' className='size-3' />
+						)}
+						{segments[i] === 'incorrect' && (
+							<X aria-hidden='true' className='size-3' />
+						)}
+					</li>
 				))}
-			</div>
+			</ol>
 		</div>
 	)
 }
@@ -120,27 +130,22 @@ function EndOfRoundActions({
 	remaining: number
 }) {
 	if (hasWon || hasLost) {
-		if (persistKey) {
-			return (
-				<div className='flex items-center gap-3'>
-					<Button
-						className='rounded-md border border-slate-300 bg-white cursor-pointer px-3 py-1 font-semibold text-slate-900 text-sm shadow hover:bg-slate-100 active:bg-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400'
-						onClick={onOpenResults}
-						type='button'
-					>
-						Results
-					</Button>
-				</div>
-			)
-		}
-		if (endOfRoundAction) {
-			return <div className='flex items-center gap-3'>{endOfRoundAction}</div>
-		}
-		return null
+		return (
+			<div className='flex flex-wrap items-center justify-center gap-3'>
+				<Button
+					className='rounded-md border border-slate-300 bg-white cursor-pointer px-3 py-1 font-semibold text-slate-900 text-sm shadow hover:bg-slate-100 active:bg-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400'
+					onClick={onOpenResults}
+					type='button'
+				>
+					Results
+				</Button>
+				{!persistKey && endOfRoundAction}
+			</div>
+		)
 	}
 	return (
 		<div className='flex items-center gap-3'>
-			<div className='rounded-md bg-black/40 px-3 pt-1 font-semibold text-slate-100 text-sm'>
+			<div className='font-semibold text-slate-100 text-sm'>
 				Guesses left: <span className='tabular-nums'>{remaining}</span>
 			</div>
 		</div>
@@ -217,7 +222,8 @@ function isTypingInInput(target: HTMLElement | null): boolean {
 	const tag = target.tagName
 	if (tag === 'INPUT' || tag === 'TEXTAREA') return true
 	if (target.isContentEditable) return true
-	// react-select uses a div with role="combobox" containing an input; guard by attribute too
+	if (target.closest('[role="dialog"]')) return true
+	// Also avoid guessing while an editable ARIA widget is focused.
 	const role = target.getAttribute?.('role')
 	if (role === 'combobox' || role === 'textbox') return true
 	return false
@@ -288,7 +294,9 @@ export function GameBoard({
 	})
 	// Modal state for guessing the full card name
 	const [nameGuessOpen, setNameGuessOpen] = useState<boolean>(false)
-	const nameGuessStatusTimeoutRef = useRef<number | null>(null)
+	const [feedback, setFeedback] = useState('')
+	const completedRef = useRef<HTMLDivElement | null>(null)
+	const guessButtonRef = useRef<HTMLButtonElement | null>(null)
 	const initialNameGuessed = (() => {
 		const entry = readCentralEntry()
 		// Store normalized names to avoid spacing/punctuation variants counting separately
@@ -312,7 +320,7 @@ export function GameBoard({
 		return char
 	}, [])
 
-	// Winning is now only via correct name guess in the dropdown
+	// Winning is only via a correct full-name guess.
 	// Determine if a guess reveals anything anywhere on the card (text fields only)
 	const searchableTexts = useMemo(() => {
 		const g = card.guardian
@@ -367,9 +375,11 @@ export function GameBoard({
 			if (revealsAny(normalized)) {
 				setCorrect(prev => new Set(prev).add(normalized))
 				setResults(prev => [...prev, 'correct'])
+				setFeedback(`${char.toUpperCase()} revealed matching clues.`)
 			} else {
 				setIncorrect(prev => new Set(prev).add(normalized))
 				setResults(prev => [...prev, 'incorrect'])
+				setFeedback(`${char.toUpperCase()} does not appear on this card.`)
 			}
 			setRemaining(prev => Math.max(0, prev - 1))
 		},
@@ -380,6 +390,8 @@ export function GameBoard({
 		function onKeyDown(e: KeyboardEvent) {
 			// Block typing guesses when only the final attempt remains
 			if (hasWon || remaining <= 1) return
+			if (nameGuessOpen || resultsOpen || e.ctrlKey || e.metaKey || e.altKey)
+				return
 			const target = e.target as HTMLElement | null
 			if (isTypingInInput(target)) return
 			const key = e.key
@@ -388,31 +400,32 @@ export function GameBoard({
 		}
 		window.addEventListener('keydown', onKeyDown)
 		return () => window.removeEventListener('keydown', onKeyDown)
-	}, [hasWon, remaining, handlePress])
+	}, [hasWon, remaining, handlePress, nameGuessOpen, resultsOpen])
 
-	// Clear any pending timeout on unmount
 	useEffect(() => {
-		return () => {
-			if (nameGuessStatusTimeoutRef.current != null) {
-				window.clearTimeout(nameGuessStatusTimeoutRef.current)
-			}
-		}
-	}, [])
+		if ((hasWon || hasLost) && !resultsOpen) completedRef.current?.focus()
+	}, [hasWon, hasLost, resultsOpen])
 
 	const submitNameGuess = useCallback(
 		(nameValue: string) => {
 			if (!nameValue || hasWon || remaining <= 0) return
 			const normalizedSubmitted = normalizeNameForComparison(nameValue)
 			const already = nameGuessedRef.current.has(normalizedSubmitted)
+			if (already) {
+				setFeedback(`You already tried “${nameValue}”. No guess used.`)
+				return
+			}
 			if (!already) {
 				nameGuessedRef.current.add(normalizedSubmitted)
 				const actual = normalizeNameForComparison(card.name)
 				if (normalizedSubmitted === actual) {
 					setHasWon(true)
+					setFeedback(`Correct — ${card.name}. You won!`)
 					setResults(prev => [...prev, 'correct'])
 					if (autoOpenResultsOnWin) setResultsOpen(true)
 				} else {
 					setResults(prev => [...prev, 'incorrect'])
+					setFeedback(`“${nameValue}” is not the card. One guess used.`)
 				}
 				setRemaining(prev => Math.max(0, prev - 1))
 			}
@@ -458,10 +471,10 @@ export function GameBoard({
 		onLose?.()
 	}, [hasLost, onLose])
 
-	const remainingAllowsNameGuess = remaining > 0
+	const roundEnded = hasWon || hasLost
 
 	return (
-		<div className='mx-auto flex flex-col items-center gap-4 sm:gap-6 w-full max-w-3xl'>
+		<div className='mx-auto grid items-start justify-items-center gap-3 w-full max-w-5xl lg:grid-cols-2 lg:gap-8'>
 			<div className='w-full flex justify-center'>
 				<CardVisual
 					card={card}
@@ -471,31 +484,75 @@ export function GameBoard({
 					hasWon={hasWon}
 				/>
 			</div>
-			<GuessProgressBar results={results} />
-			<EndOfRoundActions
-				endOfRoundAction={endOfRoundAction}
-				hasLost={hasLost}
-				hasWon={hasWon}
-				onOpenResults={() => setResultsOpen(true)}
-				{...(persistKey ? {persistKey} : {})}
-				remaining={remaining}
-			/>
-			<div className='flex items-center justify-center gap-3 w-full'>
-				<Button
-					className='w-full sm:w-auto sm:flex-none whitespace-nowrap rounded-md border border-slate-300 bg-white cursor-pointer px-4 py-2 text-sm font-semibold text-slate-900 shadow hover:bg-slate-100 active:bg-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 disabled:opacity-50'
-					disabled={hasWon || !remainingAllowsNameGuess}
-					onClick={() => setNameGuessOpen(true)}
-					type='button'
+			<div className='flex w-full max-w-md flex-col items-center gap-2 lg:self-center'>
+				<GuessProgressBar results={results} />
+				{roundEnded && (
+					<div
+						className='w-full text-center outline-none'
+						ref={completedRef}
+						tabIndex={-1}
+					>
+						<p className='text-lg font-semibold'>
+							{hasWon ? 'You named the card!' : 'The card was…'}
+						</p>
+						<p className='mt-1 text-sm text-slate-300'>{card.name}</p>
+					</div>
+				)}
+				<EndOfRoundActions
+					endOfRoundAction={endOfRoundAction}
+					hasLost={hasLost}
+					hasWon={hasWon}
+					onOpenResults={() => setResultsOpen(true)}
+					{...(persistKey ? {persistKey} : {})}
+					remaining={remaining}
+				/>
+				<output
+					aria-atomic='true'
+					aria-live='polite'
+					className={
+						feedback || remaining === 1 || hasLost
+							? 'w-full text-center text-sm text-slate-300'
+							: 'sr-only'
+					}
 				>
-					Guess card
-				</Button>
+					{feedback && <span className='block'>{feedback}</span>}
+					{!roundEnded && remaining === 1 && (
+						<span className='block mt-1 font-semibold text-slate-100'>
+							Final guess — name the card. Clue keys are now off.
+						</span>
+					)}
+					{!roundEnded && feedback && (
+						<span className='sr-only'>
+							{remaining} {remaining === 1 ? 'guess' : 'guesses'} left.
+						</span>
+					)}
+					{hasLost && (
+						<span className='sr-only'>
+							No guesses left. The card was {card.name}.
+						</span>
+					)}
+				</output>
+				{!roundEnded && (
+					<>
+						<div className='flex items-center justify-center gap-3 w-full'>
+							<Button
+								className='w-full sm:w-auto sm:flex-none whitespace-nowrap rounded-md border border-slate-300 bg-white cursor-pointer px-4 py-2 text-sm font-semibold text-slate-900 shadow hover:bg-slate-100 active:bg-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 disabled:opacity-50'
+								onClick={() => setNameGuessOpen(true)}
+								ref={guessButtonRef}
+								type='button'
+							>
+								Guess card
+							</Button>
+						</div>
+						<Keyboard
+							correct={correct}
+							disabled={hasWon || remaining <= 1}
+							incorrect={incorrect}
+							onPress={handlePress}
+						/>
+					</>
+				)}
 			</div>
-			<Keyboard
-				correct={correct}
-				disabled={hasWon || remaining <= 1}
-				incorrect={incorrect}
-				onPress={handlePress}
-			/>
 
 			<ResultsModal
 				cardName={card.name}
@@ -507,9 +564,13 @@ export function GameBoard({
 				results={results}
 			/>
 			<NameGuessModal
-				cardName={card.name}
+				card={card}
 				guessed={guessed}
 				onClose={() => setNameGuessOpen(false)}
+				onReturnFocus={() => {
+					if (roundEnded) completedRef.current?.focus()
+					else guessButtonRef.current?.focus()
+				}}
 				onSubmit={name => {
 					setNameGuessOpen(false)
 					// Only allow a name guess if at least one attempt remains

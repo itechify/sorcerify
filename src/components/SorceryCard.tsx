@@ -176,6 +176,33 @@ function maskText(text: string, guessed: Set<string>): string {
 }
 
 /** ===== Component ===== */
+export function CardClues({card, guessed}: {card: Card; guessed: Set<string>}) {
+	const g = card.guardian
+	const cost =
+		g.type === 'Avatar'
+			? `Life: ${maskText(String(g.life ?? ''), guessed)}`
+			: `Cost: ${maskText(String(g.cost), guessed)}`
+	const stats = statDisplay(g.attack, g.defence)
+	return (
+		<div className='grid gap-2 text-sm text-slate-200'>
+			<p className='break-words font-semibold tracking-wider'>
+				{maskText(card.name, guessed)}
+			</p>
+			<div className='flex flex-wrap items-center gap-3 tabular-nums'>
+				<span>{cost}</span>
+				{stats && <span>Stats: {maskText(stats, guessed)}</span>}
+				{renderThresholdImages(g.thresholds, guessed, false)}
+			</div>
+			<p className='tracking-wider'>
+				{maskText(card.sets?.[0]?.variants?.[0]?.typeText ?? '', guessed)}
+			</p>
+			<p className='whitespace-pre-line break-words tracking-wider'>
+				{renderRulesText(g.rulesText, guessed, false)}
+			</p>
+		</div>
+	)
+}
+
 export function SorceryCard({
 	card,
 	guessed,

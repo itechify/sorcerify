@@ -1,6 +1,7 @@
 import {
 	Dialog,
 	DialogContent,
+	DialogDescription,
 	DialogHeader,
 	DialogTitle
 } from '@/components/ui/dialog'
@@ -22,6 +23,9 @@ export function InfoModal({
 			<DialogContent className='sm:max-w-lg'>
 				<DialogHeader>
 					<DialogTitle>How to play Sorcerify</DialogTitle>
+					<DialogDescription>
+						One hidden card. Seven guesses to name it.
+					</DialogDescription>
 				</DialogHeader>
 				<div className='space-y-3 text-sm leading-6'>
 					<p>
@@ -35,10 +39,15 @@ export function InfoModal({
 							type, cost/life, stats, rules text), it will be revealed.
 						</li>
 						<li>
-							To win, pick a name from the dropdown and click
-							<span className='font-semibold'> Guess name</span>. A correct name
-							wins immediately; an incorrect name uses a guess and is removed
-							from the dropdown.
+							To win, choose <span className='font-semibold'>Guess card</span>{' '}
+							and type the complete name, including revealed letters. Spaces and
+							punctuation are optional. A correct name wins; a wrong name uses
+							one guess. Repeating a name costs no extra guess.
+						</li>
+						<li>
+							Your final guess is reserved for the card name. With one guess
+							left, the clue keys turn off and{' '}
+							<span className='font-semibold'>Guess card</span> stays available.
 						</li>
 						<li>
 							You lose when guesses reach 0; the full card is then revealed.

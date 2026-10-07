@@ -1,8 +1,9 @@
-import {useCallback, useMemo, useState} from 'react'
+import {useCallback, useEffect, useId, useMemo, useState} from 'react'
 import {Button} from '@/components/ui/button'
 import {
 	Dialog,
 	DialogContent,
+	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle
@@ -28,6 +29,15 @@ export function ResultsModal({
 	cardImageUrl?: string
 }) {
 	const [copied, setCopied] = useState<boolean>(false)
+	const [copyFailed, setCopyFailed] = useState(false)
+	const [copying, setCopying] = useState(false)
+	const shareId = useId()
+	useEffect(() => {
+		if (!open) {
+			setCopied(false)
+			setCopyFailed(false)
+		}
+	}, [open])
 
 	const curiosaUrl = useMemo(() => {
 		const slug = cardName
@@ -54,6 +64,10 @@ export function ResultsModal({
 		const header = persistKey ? `Sorcerify ${persistKey}` : 'Sorcerify'
 		return `${header}\n${resultRow}\nhttps://sorcerify.com`
 	}, [persistKey, resultRow])
+	let shareLabel = 'Share'
+	if (copyFailed) shareLabel = 'Try copy again'
+	if (copied) shareLabel = 'Copied!'
+	if (copying) shareLabel = 'Copying…'
 
 	return (
 		<Dialog
@@ -64,10 +78,16 @@ export function ResultsModal({
 		>
 			<DialogContent className='sm:max-w-lg'>
 				<DialogHeader>
-					<DialogTitle>Daily Results</DialogTitle>
+					<DialogTitle>
+						{persistKey ? 'Daily Results' : 'Practice Results'}
+					</DialogTitle>
+					<DialogDescription>
+						{hasWon
+							? 'You named the card!'
+							: 'No guesses left. Here is the card.'}
+					</DialogDescription>
 				</DialogHeader>
 				<div className='space-y-4'>
-					<p className='text-sm'>{hasWon ? 'You won!' : 'You lost 😔'}</p>
 					{cardImageUrl ? (
 						<div className='w-full flex justify-center'>
 							<img
@@ -90,20 +110,45 @@ export function ResultsModal({
 						</div>
 					</div>
 				</div>
+				<output aria-live='polite' className='text-sm text-slate-300'>
+					{copied && 'Result copied to clipboard.'}
+					{copyFailed &&
+						'Could not copy your result. Select and copy the text below, or try again.'}
+				</output>
+				{copyFailed && (
+					<div className='grid gap-2'>
+						<label className='text-sm font-semibold' htmlFor={shareId}>
+							Share text
+						</label>
+						<textarea
+							className='w-full rounded-md border border-input bg-background p-3 text-base text-foreground selection:bg-primary selection:text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400'
+							id={shareId}
+							onFocus={event => event.currentTarget.select()}
+							readOnly={true}
+							rows={3}
+							value={shareText}
+						/>
+					</div>
+				)}
 				<DialogFooter className='sm:justify-start'>
 					<Button
+						disabled={copying}
 						onClick={async () => {
+							setCopying(true)
+							setCopied(false)
 							try {
 								await navigator.clipboard.writeText(shareText)
 								setCopied(true)
-								window.setTimeout(() => setCopied(false), 1200)
+								setCopyFailed(false)
 							} catch {
-								// ignore
+								setCopyFailed(true)
+							} finally {
+								setCopying(false)
 							}
 						}}
 						variant='outline'
 					>
-						{copied ? 'Copied to clipboard!' : 'Share'}
+						{shareLabel}
 					</Button>
 					<Button asChild={true} variant='secondary'>
 						<a href={curiosaUrl} rel='noopener noreferrer' target='_blank'>

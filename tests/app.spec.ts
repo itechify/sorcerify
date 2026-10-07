@@ -35,9 +35,28 @@ test('navigate to Practice and make a guess with on-screen keyboard', async ({
 
 	await expect(page.getByText('Win streak:')).toBeVisible()
 
-	await expect(page.getByRole('button', {name: 'Guess name'})).toBeDisabled()
+	await expect(page.getByRole('button', {name: 'Guess card'})).toBeEnabled()
 
 	await expect(page.getByText(GUESSES_LEFT_7_RE)).toBeVisible()
 	await page.getByRole('button', {name: 'Z'}).click()
 	await expect(page.getByText(GUESSES_LEFT_6_RE)).toBeVisible()
+})
+
+test('help stays within a small phone and its close control stays reachable after scrolling', async ({
+	page
+}) => {
+	await page.setViewportSize({width: 320, height: 568})
+	await page.goto('/daily')
+	await page.getByRole('button', {name: 'How to play'}).click()
+	const dialog = page.getByRole('dialog')
+	const bounds = await dialog.boundingBox()
+	expect(bounds).not.toBeNull()
+	expect(bounds?.y).toBeGreaterThanOrEqual(0)
+	expect((bounds?.y ?? 0) + (bounds?.height ?? 0)).toBeLessThanOrEqual(568)
+	await dialog.locator('[data-slot="dialog-body"]').evaluate(element => {
+		element.scrollTop = element.scrollHeight
+	})
+	await expect(dialog.getByRole('button', {name: 'Close'})).toBeInViewport()
+	await dialog.getByRole('button', {name: 'Close'}).click()
+	await expect(dialog).toHaveCount(0)
 })
