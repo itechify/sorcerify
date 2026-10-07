@@ -1,166 +1,429 @@
 {
-  "schemaVersion": 2,
-  "generatedAt": "2026-10-06T21:00:00Z",
-  "title": "Design System: Sorcerify",
-  "extensions": {
-    "colorMeta": {
-      "midnight-table": { "role": "neutral", "displayName": "Midnight Table", "canonical": "oklch(0.145 0 0)", "tonalRamp": ["oklch(0.10 0 0)", "oklch(0.145 0 0)", "oklch(0.205 0 0)", "oklch(0.269 0 0)", "oklch(0.371 0 0)", "oklch(0.556 0 0)", "oklch(0.708 0 0)", "oklch(0.922 0 0)"] },
-      "table-raised": { "role": "neutral", "displayName": "Table Raised", "canonical": "oklch(0.269 0 0)", "tonalRamp": ["oklch(0.145 0 0)", "oklch(0.205 0 0)", "oklch(0.269 0 0)", "oklch(0.371 0 0)", "oklch(0.439 0 0)", "oklch(0.556 0 0)", "oklch(0.708 0 0)", "oklch(0.87 0 0)"] },
-      "moonlight": { "role": "neutral", "displayName": "Moonlight", "canonical": "oklch(0.985 0 0)", "tonalRamp": ["oklch(0.205 0 0)", "oklch(0.371 0 0)", "oklch(0.556 0 0)", "oklch(0.708 0 0)", "oklch(0.87 0 0)", "oklch(0.922 0 0)", "oklch(0.97 0 0)", "oklch(0.985 0 0)"] },
-      "pale-lamp": { "role": "primary", "displayName": "Pale Lamp", "canonical": "oklch(0.922 0 0)", "tonalRamp": ["oklch(0.205 0 0)", "oklch(0.371 0 0)", "oklch(0.556 0 0)", "oklch(0.708 0 0)", "oklch(0.87 0 0)", "oklch(0.922 0 0)", "oklch(0.97 0 0)", "oklch(0.985 0 0)"] },
-      "lamp-ink": { "role": "neutral", "displayName": "Lamp Ink", "canonical": "oklch(0.205 0 0)" },
-      "ash": { "role": "neutral", "displayName": "Ash", "canonical": "oklch(0.708 0 0)" },
-      "hairline": { "role": "neutral", "displayName": "Hairline", "canonical": "oklch(1 0 0 / 10%)" },
-      "spellbook-ink": { "role": "tertiary", "displayName": "Spellbook Ink", "canonical": "#0b1220", "tonalRamp": ["oklch(15% 0.03 262)", "oklch(19% 0.03 262)", "oklch(27% 0.035 262)", "oklch(37% 0.04 262)", "oklch(50% 0.04 262)", "oklch(65% 0.035 262)", "oklch(80% 0.025 262)", "oklch(95% 0.01 262)"] },
-      "ink-panel": { "role": "tertiary", "displayName": "Ink Panel", "canonical": "#000000" },
-      "panel-rule": { "role": "tertiary", "displayName": "Panel Rule", "canonical": "oklch(44.6% 0.043 257.281 / 50%)" },
-      "card-rim": { "role": "tertiary", "displayName": "Card Rim", "canonical": "oklch(37.2% 0.044 257.287 / 60%)" },
-      "vellum": { "role": "tertiary", "displayName": "Vellum", "canonical": "oklch(96.8% 0.007 247.896)" },
-      "bone-tile": { "role": "primary", "displayName": "Bone Tile", "canonical": "oklch(92.9% 0.013 255.508)", "tonalRamp": ["oklch(20.8% 0.042 265.755)", "oklch(27.9% 0.041 260.031)", "oklch(37.2% 0.044 257.287)", "oklch(44.6% 0.043 257.281)", "oklch(55.4% 0.046 257.417)", "oklch(70.4% 0.04 256.788)", "oklch(86.9% 0.022 252.894)", "oklch(92.9% 0.013 255.508)"] },
-      "bone-white": { "role": "primary", "displayName": "Bone White", "canonical": "#ffffff" },
-      "tile-ink": { "role": "primary", "displayName": "Tile Ink", "canonical": "oklch(20.8% 0.042 265.755)" },
-      "dusk-caption": { "role": "neutral", "displayName": "Dusk Caption", "canonical": "oklch(70.4% 0.04 256.788)" },
-      "reveal-green": { "role": "secondary", "displayName": "Reveal Green", "canonical": "oklch(62.7% 0.194 149.214)", "tonalRamp": ["oklch(39.3% 0.095 152.535)", "oklch(44.8% 0.119 151.328)", "oklch(52.7% 0.154 150.069)", "oklch(62.7% 0.194 149.214)", "oklch(72.3% 0.219 149.579)", "oklch(79.2% 0.209 151.711)", "oklch(87.1% 0.15 154.449)", "oklch(92.5% 0.084 155.995)"] },
-      "miss-red": { "role": "secondary", "displayName": "Miss Red", "canonical": "oklch(57.7% 0.245 27.325)", "tonalRamp": ["oklch(39.6% 0.141 25.723)", "oklch(44.4% 0.177 26.899)", "oklch(50.5% 0.213 27.518)", "oklch(57.7% 0.245 27.325)", "oklch(63.7% 0.237 25.331)", "oklch(70.4% 0.191 22.216)", "oklch(80.8% 0.114 19.571)", "oklch(88.5% 0.062 18.334)"] },
-      "meter-hit": { "role": "secondary", "displayName": "Meter Hit", "canonical": "oklch(69.6% 0.17 162.48)", "tonalRamp": ["oklch(37.8% 0.077 168.94)", "oklch(43.2% 0.095 166.913)", "oklch(50.8% 0.118 165.612)", "oklch(59.6% 0.145 163.225)", "oklch(69.6% 0.17 162.48)", "oklch(76.5% 0.177 163.223)", "oklch(84.5% 0.143 164.978)", "oklch(90.5% 0.093 164.15)"] },
-      "meter-miss": { "role": "secondary", "displayName": "Meter Miss", "canonical": "oklch(63.7% 0.237 25.331)" },
-      "meter-empty": { "role": "neutral", "displayName": "Meter Empty", "canonical": "oklch(44.6% 0.043 257.281 / 50%)" },
-      "focus-sky": { "role": "neutral", "displayName": "Focus Sky", "canonical": "oklch(74.6% 0.16 232.661)", "tonalRamp": ["oklch(39.1% 0.09 240.876)", "oklch(44.3% 0.11 240.79)", "oklch(50% 0.134 242.749)", "oklch(58.8% 0.158 241.966)", "oklch(68.5% 0.169 237.323)", "oklch(74.6% 0.16 232.661)", "oklch(82.8% 0.111 230.318)", "oklch(90.1% 0.058 230.902)"] }
-    },
-    "typographyMeta": {
-      "title": { "displayName": "Title", "purpose": "Dialog titles." },
-      "card-name": { "displayName": "Card Name", "purpose": "The masked name bar on the card; 16px below 640px, 18px (token value) from 640px." },
-      "card-text": { "displayName": "Card Text", "purpose": "Type line and rules text on the card; 12px below 640px, 14px (token value) from 640px, pre-line wrapping." },
-      "body": { "displayName": "Body", "purpose": "Instructions, dialog copy, button labels." },
-      "label": { "displayName": "Label", "purpose": "Guesses-left count and bone action buttons; tabular numerals." },
-      "caption": { "displayName": "Caption", "purpose": "Date line, closing caption, streak chip." }
-    },
-    "shadows": [
-      { "name": "card-lift", "value": "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)", "purpose": "The masked card only; the single lifted object." },
-      { "name": "dialog-layer", "value": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)", "purpose": "Dialog content above the 50% black scrim." },
-      { "name": "piece-press", "value": "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)", "purpose": "Bone action buttons and outcome banners." },
-      { "name": "coin-inset", "value": "inset 0 2px 4px 0 rgb(0 0 0 / 0.05)", "purpose": "Cost coins and the name bar." },
-      { "name": "scrim", "value": "rgb(0 0 0 / 0.5)", "purpose": "Dialog overlay backdrop (background, not a shadow)." }
-    ],
-    "motion": [
-      { "name": "dialog-in-out", "value": "200ms fade + zoom 95%", "purpose": "Dialog open/close (tw-animate-css)." },
-      { "name": "key-color", "value": "transition-colors 150ms cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Key tiles changing to reveal/miss state." },
-      { "name": "burst-pop", "value": "120ms ease-out", "purpose": "Win burst particles appearing." },
-      { "name": "burst-fly", "value": "880-950ms cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Win burst particles flying out and fading." },
-      { "name": "burst-ring", "value": "900ms ease-out, scale 0.2 to 3.2", "purpose": "Emerald ring expanding from the card centre on a win." }
-    ],
-    "breakpoints": [
-      { "name": "sm", "value": "640px" },
-      { "name": "md", "value": "768px" }
-    ]
-  },
-  "components": [
-    {
-      "name": "Bone Action Button",
-      "kind": "button",
-      "refersTo": "button-guess",
-      "description": "The decisive move in a round: Guess card, Results, Next Card.",
-      "html": "<button class=\"ds-btn-bone\">Guess card</button>",
-      "css": ".ds-btn-bone { display: inline-flex; align-items: center; justify-content: center; height: 36px; padding: 8px 16px; border-radius: 8px; border: 1px solid oklch(86.9% 0.022 252.894); background: #ffffff; color: oklch(20.8% 0.042 265.755); font: 600 14px/1.25 Inter, sans-serif; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); cursor: pointer; transition: background-color 150ms; } .ds-btn-bone:hover { background: oklch(96.8% 0.007 247.896); } .ds-btn-bone:active { background: oklch(92.9% 0.013 255.508); } .ds-btn-bone:focus-visible { outline: 2px solid oklch(74.6% 0.16 232.661); outline-offset: 2px; }"
-    },
-    {
-      "name": "Primary Button",
-      "kind": "button",
-      "refersTo": "button-primary",
-      "description": "shadcn default: active nav tab and dialog Submit.",
-      "html": "<button class=\"ds-btn-primary\">Submit</button>",
-      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 36px; padding: 8px 16px; border: 0; border-radius: 8px; background: oklch(0.922 0 0); color: oklch(0.205 0 0); font: 500 14px/1.25 Inter, sans-serif; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); cursor: pointer; transition: all 150ms; } .ds-btn-primary:hover { background: oklch(0.922 0 0 / 0.9); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 3px oklch(0.556 0 0 / 0.5); }"
-    },
-    {
-      "name": "Ghost Button",
-      "kind": "button",
-      "refersTo": "button-ghost",
-      "description": "Inactive nav tab.",
-      "html": "<button class=\"ds-btn-ghost\">Practice</button>",
-      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; height: 32px; padding: 0 12px; border: 0; border-radius: 8px; background: transparent; color: oklch(0.985 0 0); font: 500 14px/1.25 Inter, sans-serif; cursor: pointer; transition: all 150ms; } .ds-btn-ghost:hover { background: oklch(0.269 0 0 / 0.5); } .ds-btn-ghost:focus-visible { outline: none; box-shadow: 0 0 0 3px oklch(0.556 0 0 / 0.5); }"
-    },
-    {
-      "name": "Keyboard Keys",
-      "kind": "custom",
-      "refersTo": "key-tile",
-      "description": "Bone game-piece keys in unplayed, revealed and missed states.",
-      "html": "<div class=\"ds-keys\"><button class=\"ds-key ds-key-hit\" disabled>A</button><button class=\"ds-key\">B</button><button class=\"ds-key\">C</button><button class=\"ds-key ds-key-hit\" disabled>E</button><button class=\"ds-key ds-key-miss\" disabled>Z</button><button class=\"ds-key\">7</button></div>",
-      "css": ".ds-keys { display: flex; flex-wrap: wrap; gap: 8px; padding: 16px; background: oklch(0.145 0 0); } .ds-key { width: 40px; height: 40px; border: 0; border-radius: 8px; background: oklch(92.9% 0.013 255.508); color: oklch(20.8% 0.042 265.755); font: 500 14px/1 Inter, sans-serif; cursor: pointer; transition: background-color 150ms; } .ds-key:hover { background: oklch(86.9% 0.022 252.894); } .ds-key:active { background: oklch(70.4% 0.04 256.788); } .ds-key:focus-visible { outline: none; box-shadow: 0 0 0 3px oklch(0.556 0 0 / 0.5); } .ds-key-hit { background: oklch(62.7% 0.194 149.214); color: #fff; opacity: 0.5; cursor: default; } .ds-key-miss { background: oklch(57.7% 0.245 27.325); color: #fff; opacity: 0.5; cursor: default; }"
-    },
-    {
-      "name": "Masked Card",
-      "kind": "card",
-      "refersTo": "card-slab",
-      "description": "The single lifted object: blue-black slab with black text panels and masked text.",
-      "html": "<div class=\"ds-card\"><div class=\"ds-card-top\"><span class=\"ds-card-pill\"><span class=\"ds-card-coin\">_</span></span><span class=\"ds-card-pill\">_/_</span></div><div class=\"ds-card-name\">A________ W_____</div><div class=\"ds-card-art\"></div><div class=\"ds-card-panel\"><div class=\"ds-card-type\">A_ O_______ M_____ _e_ __ ___e_</div><p class=\"ds-card-rules\">S__________\n\nG______ → D___ _ _____.</p></div></div>",
-      "css": ".ds-card { width: 280px; aspect-ratio: 380 / 531; display: flex; flex-direction: column; padding: 12px; border-radius: 24px; border: 1px solid oklch(37.2% 0.044 257.287 / 60%); background: linear-gradient(to bottom, rgba(9,13,23,0.72), rgba(9,13,23,0.78)), #0b1220; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); font-family: Inter, sans-serif; } .ds-card-top { display: flex; justify-content: space-between; align-items: center; } .ds-card-pill { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 9999px; background: #000; color: oklch(96.8% 0.007 247.896); font-weight: 700; font-size: 12px; letter-spacing: 0.05em; font-variant-numeric: tabular-nums; } .ds-card-coin { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 9999px; background: oklch(92.9% 0.013 255.508); color: oklch(20.8% 0.042 265.755); border: 1px solid oklch(27.9% 0.041 260.031 / 70%); box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05); } .ds-card-name { margin-top: 8px; padding: 8px 12px; border-radius: 8px; background: #000; color: oklch(96.8% 0.007 247.896); font-size: 16px; font-weight: 600; letter-spacing: 0.05em; } .ds-card-art { flex: 1; } .ds-card-panel { margin-top: 8px; overflow: hidden; border-radius: 14px; border: 1px solid oklch(44.6% 0.043 257.281 / 50%); background: #000; } .ds-card-type { padding: 4px 12px; border-bottom: 1px solid oklch(44.6% 0.043 257.281 / 50%); color: oklch(92.9% 0.013 255.508 / 90%); font-size: 12px; font-weight: 500; letter-spacing: 0.05em; } .ds-card-rules { margin: 0; padding: 8px 12px; white-space: pre-line; color: oklch(92.9% 0.013 255.508 / 90%); font-size: 12px; line-height: 1.375; letter-spacing: 0.05em; }"
-    },
-    {
-      "name": "Guess Meter",
-      "kind": "custom",
-      "description": "Seven segments filling with hit/miss as guesses are spent.",
-      "html": "<div class=\"ds-meter\"><span class=\"ds-seg ds-seg-hit\"></span><span class=\"ds-seg ds-seg-hit\"></span><span class=\"ds-seg ds-seg-miss\"></span><span class=\"ds-seg\"></span><span class=\"ds-seg\"></span><span class=\"ds-seg\"></span><span class=\"ds-seg\"></span></div>",
-      "css": ".ds-meter { display: flex; gap: 4px; width: 320px; padding: 12px; background: oklch(0.145 0 0); } .ds-seg { flex: 1; height: 8px; border-radius: 6px; background: oklch(44.6% 0.043 257.281 / 50%); } .ds-seg-hit { background: oklch(69.6% 0.17 162.48); } .ds-seg-miss { background: oklch(63.7% 0.237 25.331); }"
-    },
-    {
-      "name": "Streak Chip",
-      "kind": "chip",
-      "refersTo": "streak-chip",
-      "description": "Navbar daily streak count.",
-      "html": "<span class=\"ds-chip-streak\">Daily Streak: <span class=\"ds-num\">12</span></span>",
-      "css": ".ds-chip-streak { display: inline-block; padding: 4px 8px; border-radius: 8px; background: oklch(20.8% 0.042 265.755); color: #fff; font: 600 12px/1.333 Inter, sans-serif; } .ds-num { font-variant-numeric: tabular-nums; }"
-    },
-    {
-      "name": "Navigation",
-      "kind": "nav",
-      "description": "Fixed transparent blurred bar: wordmark left, mode tabs and streak right. (Snippet adds a 60% Midnight Table fill so it reads on the panel canvas; the real bar is fully transparent.)",
-      "html": "<header class=\"ds-nav\"><span class=\"ds-nav-brand\">Sorcerify</span><nav class=\"ds-nav-links\"><a class=\"ds-nav-tab ds-nav-tab-active\" href=\"#\">Daily</a><a class=\"ds-nav-tab\" href=\"#\">Practice</a><span class=\"ds-nav-streak\">Daily Streak: 3</span></nav></header>",
-      "css": ".ds-nav { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: oklch(0.145 0 0 / 0.6); backdrop-filter: blur(8px); font-family: Inter, sans-serif; } .ds-nav-brand { color: #fff; font-size: 18px; font-weight: 600; } .ds-nav-links { display: flex; align-items: center; gap: 8px; } .ds-nav-tab { display: inline-flex; align-items: center; height: 32px; padding: 0 12px; border-radius: 8px; color: oklch(0.985 0 0); font-size: 14px; font-weight: 500; text-decoration: none; transition: all 150ms; } .ds-nav-tab:hover { background: oklch(0.269 0 0 / 0.5); } .ds-nav-tab:focus-visible { outline: none; box-shadow: 0 0 0 3px oklch(0.556 0 0 / 0.5); } .ds-nav-tab-active, .ds-nav-tab-active:hover { background: oklch(0.922 0 0); color: oklch(0.205 0 0); } .ds-nav-streak { margin-left: 8px; padding: 4px 8px; border-radius: 8px; background: oklch(20.8% 0.042 265.755); color: #fff; font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }"
-    },
-    {
-      "name": "Name Guess Slots",
-      "kind": "input",
-      "refersTo": "name-slot",
-      "description": "Letter slots for typing the card name; revealed letters show as faint hints.",
-      "html": "<div class=\"ds-slots\"><div class=\"ds-slot-word\"><span class=\"ds-slot\">A</span><span class=\"ds-slot\">P</span><span class=\"ds-slot ds-slot-hint\">E</span><span class=\"ds-slot\"></span></div><div class=\"ds-slot-word\"><span class=\"ds-slot\"></span><span class=\"ds-slot ds-slot-sym\">-</span><span class=\"ds-slot\"></span></div></div>",
-      "css": ".ds-slots { display: inline-flex; flex-wrap: wrap; gap: 8px 20px; padding: 8px; border-radius: 8px; background: oklch(27.9% 0.041 260.031); font-family: Inter, sans-serif; } .ds-slot-word { display: flex; gap: 8px; } .ds-slot { display: grid; place-items: center; width: 36px; height: 40px; border-radius: 8px; background: oklch(86.9% 0.022 252.894 / 80%); color: oklch(20.8% 0.042 265.755); font-weight: 600; } .ds-slot-hint { color: oklch(20.8% 0.042 265.755 / 40%); } .ds-slot-sym { background: oklch(86.9% 0.022 252.894 / 60%); color: oklch(20.8% 0.042 265.755 / 60%); }"
-    }
-  ],
-  "narrative": {
-    "northStar": "The Scrying Table",
-    "overview": "Sorcerify is a dark table lit by a single focus. In the middle of the room is one veiled card, its text hidden behind blanks, and the player leans in to read it by candlelight. Everything around the card is near-black, neutral and quiet. The page chrome takes no part in the magic. It holds the card, counts the guesses and gets out of the way. The arcane mood comes from three things the system does not draw itself: the Sorcerify logo, the dimmed Sorcery card back behind the masked card, and the four elemental threshold icons. The UI's job is to frame them, not compete with them.\n\nThe density is that of a single-column game board: the logo, the date, the card, the guess meter, the guess button, the keyboard. There's one decision on screen at a time, read top to bottom. The interface currently ships dark only (the `dark` class is hardcoded on `<html>`; the light tokens in `:root` are never shown), and the neutral tokens have zero chroma, so the only colour a player sees comes from the card itself and from feedback: green for a reveal, red for a miss. The pale bone tiles of the keyboard sit on the table like physical game pieces. They are the brightest objects after the card, because they are what the player touches.\n\nBright, busy chrome is rejected. No gradients, glows or neon on navigation, buttons, panels or backgrounds. Two things are allowed to sparkle. The logo is a brand asset and stays as drawn. The win burst is feedback, and it happens once.",
-    "keyCharacteristics": [
-      "Achromatic near-black stage. Colour only shows up as game feedback.",
-      "One lifted object, the masked card. Everything else lies flat on the table.",
-      "Pale, solid key tiles that change colour decisively once used.",
-      "Masked text keeps the shape of every word: underscores stand in for letters and digits, and punctuation and spacing stay visible.",
-      "Elemental thresholds are always shown as the four icon images, never as letters or emoji.",
-      "One sans family (Inter) everywhere. Tracking is widened on card text so the blanks read as discrete slots."
-    ],
-    "rules": [
-      { "name": "The Feedback-Only Colour Rule", "body": "Chrome is achromatic. Hue appears only when it reports a game outcome (a revealed letter, a miss, a win or a loss) or when it comes from the card's own art and icons. A coloured nav bar, coloured panel or tinted page background breaks the table.", "section": "colors" },
-      { "name": "The Two Signals Rule", "body": "Green means \"this revealed something\", red means \"this didn't\". They keep that meaning everywhere: keys, meter, banners and the share squares. Never reuse them for decoration or for unrelated status.", "section": "colors" },
-      { "name": "The Tabular Count Rule", "body": "Every number that changes during play (guesses left, streaks, cost, life, attack/defence) uses tabular numerals, so the layout never jitters as values tick.", "section": "typography" },
-      { "name": "The Slot Tracking Rule", "body": "Masked card text always keeps `0.05em` tracking. Without it, runs of underscores merge into a single line and the word shapes, which are the game's main clue, disappear.", "section": "typography" },
-      { "name": "The Single Lift Rule", "body": "Only the card casts a structural shadow on the table. If a new panel, sheet or tile needs to stand out, give it tone or position, not a second big shadow. Dialogs are the only exception, because they are temporary.", "section": "elevation" }
-    ],
-    "dos": [
-      "**Do** keep the page, navbar and dialogs on Midnight Table (`oklch(0.145 0 0)`), with zero-chroma neutrals for all chrome.",
-      "**Do** reserve green and red for reveal/miss and win/loss outcomes, in keys, meter, banners and share squares alike.",
-      "**Do** make the masked card the only object with a structural shadow (Card lift). Every other element lies flat.",
-      "**Do** style new interactive game pieces (keys, slots, decisive actions) as pale bone tiles with Tile Ink labels and 8px corners, so they read as things to touch.",
-      "**Do** keep `0.05em` tracking and `pre-line` wrapping on masked card text, so word shapes survive masking.",
-      "**Do** show elements with the four threshold icon images (`/threshold-icons/*.png`), in keys, on the card and inline in rules text.",
-      "**Do** use tabular numerals for every changing count.",
-      "**Do** keep every tap target at least 44 × 44px below 640px.",
-      "**Do** keep secondary copy at slate-400 (Dusk Caption) or lighter on Midnight Table."
-    ],
-    "donts": [
-      "**Don't** put gradients, glows, neon or tinted backgrounds on chrome (navbar, buttons, panels, page). The logo and the one-shot win burst are the only things that sparkle.",
-      "**Don't** use green or red for decoration, branding or unrelated status.",
-      "**Don't** add a second lifted surface competing with the card, such as floating panels, elevated keyboards or shadowed cards in lists.",
-      "**Don't** redraw, recolour or restyle the logo illustration. The logo images in `public/` are the identity. The navbar's live-type \"Sorcerify\" label is plain UI text, not a second wordmark.",
-      "**Don't** replace threshold icons with letters, emoji or new icon sets."
-    ]
-  }
+	"schemaVersion": 2,
+	"generatedAt": "2026-10-06T21:00:00Z",
+	"title": "Design System: Sorcerify",
+	"extensions": {
+		"colorMeta": {
+			"midnight-table": {
+				"role": "neutral",
+				"displayName": "Midnight Table",
+				"canonical": "oklch(0.145 0 0)",
+				"tonalRamp": [
+					"oklch(0.10 0 0)",
+					"oklch(0.145 0 0)",
+					"oklch(0.205 0 0)",
+					"oklch(0.269 0 0)",
+					"oklch(0.371 0 0)",
+					"oklch(0.556 0 0)",
+					"oklch(0.708 0 0)",
+					"oklch(0.922 0 0)"
+				]
+			},
+			"table-raised": {
+				"role": "neutral",
+				"displayName": "Table Raised",
+				"canonical": "oklch(0.269 0 0)",
+				"tonalRamp": [
+					"oklch(0.145 0 0)",
+					"oklch(0.205 0 0)",
+					"oklch(0.269 0 0)",
+					"oklch(0.371 0 0)",
+					"oklch(0.439 0 0)",
+					"oklch(0.556 0 0)",
+					"oklch(0.708 0 0)",
+					"oklch(0.87 0 0)"
+				]
+			},
+			"moonlight": {
+				"role": "neutral",
+				"displayName": "Moonlight",
+				"canonical": "oklch(0.985 0 0)",
+				"tonalRamp": [
+					"oklch(0.205 0 0)",
+					"oklch(0.371 0 0)",
+					"oklch(0.556 0 0)",
+					"oklch(0.708 0 0)",
+					"oklch(0.87 0 0)",
+					"oklch(0.922 0 0)",
+					"oklch(0.97 0 0)",
+					"oklch(0.985 0 0)"
+				]
+			},
+			"pale-lamp": {
+				"role": "primary",
+				"displayName": "Pale Lamp",
+				"canonical": "oklch(0.922 0 0)",
+				"tonalRamp": [
+					"oklch(0.205 0 0)",
+					"oklch(0.371 0 0)",
+					"oklch(0.556 0 0)",
+					"oklch(0.708 0 0)",
+					"oklch(0.87 0 0)",
+					"oklch(0.922 0 0)",
+					"oklch(0.97 0 0)",
+					"oklch(0.985 0 0)"
+				]
+			},
+			"lamp-ink": {
+				"role": "neutral",
+				"displayName": "Lamp Ink",
+				"canonical": "oklch(0.205 0 0)"
+			},
+			"ash": {
+				"role": "neutral",
+				"displayName": "Ash",
+				"canonical": "oklch(0.708 0 0)"
+			},
+			"hairline": {
+				"role": "neutral",
+				"displayName": "Hairline",
+				"canonical": "oklch(1 0 0 / 10%)"
+			},
+			"spellbook-ink": {
+				"role": "tertiary",
+				"displayName": "Spellbook Ink",
+				"canonical": "#0b1220",
+				"tonalRamp": [
+					"oklch(15% 0.03 262)",
+					"oklch(19% 0.03 262)",
+					"oklch(27% 0.035 262)",
+					"oklch(37% 0.04 262)",
+					"oklch(50% 0.04 262)",
+					"oklch(65% 0.035 262)",
+					"oklch(80% 0.025 262)",
+					"oklch(95% 0.01 262)"
+				]
+			},
+			"ink-panel": {
+				"role": "tertiary",
+				"displayName": "Ink Panel",
+				"canonical": "#000000"
+			},
+			"panel-rule": {
+				"role": "tertiary",
+				"displayName": "Panel Rule",
+				"canonical": "oklch(44.6% 0.043 257.281 / 50%)"
+			},
+			"card-rim": {
+				"role": "tertiary",
+				"displayName": "Card Rim",
+				"canonical": "oklch(37.2% 0.044 257.287 / 60%)"
+			},
+			"vellum": {
+				"role": "tertiary",
+				"displayName": "Vellum",
+				"canonical": "oklch(96.8% 0.007 247.896)"
+			},
+			"bone-tile": {
+				"role": "primary",
+				"displayName": "Bone Tile",
+				"canonical": "oklch(92.9% 0.013 255.508)",
+				"tonalRamp": [
+					"oklch(20.8% 0.042 265.755)",
+					"oklch(27.9% 0.041 260.031)",
+					"oklch(37.2% 0.044 257.287)",
+					"oklch(44.6% 0.043 257.281)",
+					"oklch(55.4% 0.046 257.417)",
+					"oklch(70.4% 0.04 256.788)",
+					"oklch(86.9% 0.022 252.894)",
+					"oklch(92.9% 0.013 255.508)"
+				]
+			},
+			"bone-white": {
+				"role": "primary",
+				"displayName": "Bone White",
+				"canonical": "#ffffff"
+			},
+			"tile-ink": {
+				"role": "primary",
+				"displayName": "Tile Ink",
+				"canonical": "oklch(20.8% 0.042 265.755)"
+			},
+			"dusk-caption": {
+				"role": "neutral",
+				"displayName": "Dusk Caption",
+				"canonical": "oklch(70.4% 0.04 256.788)"
+			},
+			"reveal-green": {
+				"role": "secondary",
+				"displayName": "Reveal Green",
+				"canonical": "oklch(62.7% 0.194 149.214)",
+				"tonalRamp": [
+					"oklch(39.3% 0.095 152.535)",
+					"oklch(44.8% 0.119 151.328)",
+					"oklch(52.7% 0.154 150.069)",
+					"oklch(62.7% 0.194 149.214)",
+					"oklch(72.3% 0.219 149.579)",
+					"oklch(79.2% 0.209 151.711)",
+					"oklch(87.1% 0.15 154.449)",
+					"oklch(92.5% 0.084 155.995)"
+				]
+			},
+			"miss-red": {
+				"role": "secondary",
+				"displayName": "Miss Red",
+				"canonical": "oklch(57.7% 0.245 27.325)",
+				"tonalRamp": [
+					"oklch(39.6% 0.141 25.723)",
+					"oklch(44.4% 0.177 26.899)",
+					"oklch(50.5% 0.213 27.518)",
+					"oklch(57.7% 0.245 27.325)",
+					"oklch(63.7% 0.237 25.331)",
+					"oklch(70.4% 0.191 22.216)",
+					"oklch(80.8% 0.114 19.571)",
+					"oklch(88.5% 0.062 18.334)"
+				]
+			},
+			"meter-hit": {
+				"role": "secondary",
+				"displayName": "Meter Hit",
+				"canonical": "oklch(69.6% 0.17 162.48)",
+				"tonalRamp": [
+					"oklch(37.8% 0.077 168.94)",
+					"oklch(43.2% 0.095 166.913)",
+					"oklch(50.8% 0.118 165.612)",
+					"oklch(59.6% 0.145 163.225)",
+					"oklch(69.6% 0.17 162.48)",
+					"oklch(76.5% 0.177 163.223)",
+					"oklch(84.5% 0.143 164.978)",
+					"oklch(90.5% 0.093 164.15)"
+				]
+			},
+			"meter-miss": {
+				"role": "secondary",
+				"displayName": "Meter Miss",
+				"canonical": "oklch(63.7% 0.237 25.331)"
+			},
+			"meter-empty": {
+				"role": "neutral",
+				"displayName": "Meter Empty",
+				"canonical": "oklch(44.6% 0.043 257.281 / 50%)"
+			},
+			"focus-sky": {
+				"role": "neutral",
+				"displayName": "Focus Sky",
+				"canonical": "oklch(74.6% 0.16 232.661)",
+				"tonalRamp": [
+					"oklch(39.1% 0.09 240.876)",
+					"oklch(44.3% 0.11 240.79)",
+					"oklch(50% 0.134 242.749)",
+					"oklch(58.8% 0.158 241.966)",
+					"oklch(68.5% 0.169 237.323)",
+					"oklch(74.6% 0.16 232.661)",
+					"oklch(82.8% 0.111 230.318)",
+					"oklch(90.1% 0.058 230.902)"
+				]
+			}
+		},
+		"typographyMeta": {
+			"title": { "displayName": "Title", "purpose": "Dialog titles." },
+			"card-name": {
+				"displayName": "Card Name",
+				"purpose": "The masked name bar on the card; 16px below 640px, 18px (token value) from 640px."
+			},
+			"card-text": {
+				"displayName": "Card Text",
+				"purpose": "Type line and rules text on the card; 12px below 640px, 14px (token value) from 640px, pre-line wrapping."
+			},
+			"body": {
+				"displayName": "Body",
+				"purpose": "Instructions, dialog copy, button labels."
+			},
+			"label": {
+				"displayName": "Label",
+				"purpose": "Guesses-left count and bone action buttons; tabular numerals."
+			},
+			"caption": {
+				"displayName": "Caption",
+				"purpose": "Date line, closing caption, streak chip."
+			}
+		},
+		"shadows": [
+			{
+				"name": "card-lift",
+				"value": "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
+				"purpose": "The masked card only; the single lifted object."
+			},
+			{
+				"name": "dialog-layer",
+				"value": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+				"purpose": "Dialog content above the 50% black scrim."
+			},
+			{
+				"name": "piece-press",
+				"value": "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+				"purpose": "Bone action buttons and outcome banners."
+			},
+			{
+				"name": "coin-inset",
+				"value": "inset 0 2px 4px 0 rgb(0 0 0 / 0.05)",
+				"purpose": "Cost coins and the name bar."
+			},
+			{
+				"name": "scrim",
+				"value": "rgb(0 0 0 / 0.5)",
+				"purpose": "Dialog overlay backdrop (background, not a shadow)."
+			}
+		],
+		"motion": [
+			{
+				"name": "dialog-in-out",
+				"value": "200ms fade + zoom 95%",
+				"purpose": "Dialog open/close (tw-animate-css)."
+			},
+			{
+				"name": "key-color",
+				"value": "transition-colors 150ms cubic-bezier(0.4, 0, 0.2, 1)",
+				"purpose": "Key tiles changing to reveal/miss state."
+			},
+			{
+				"name": "burst-pop",
+				"value": "120ms ease-out",
+				"purpose": "Win burst particles appearing."
+			},
+			{
+				"name": "burst-fly",
+				"value": "880-950ms cubic-bezier(0.16, 1, 0.3, 1)",
+				"purpose": "Win burst particles flying out and fading."
+			},
+			{
+				"name": "burst-ring",
+				"value": "900ms ease-out, scale 0.2 to 3.2",
+				"purpose": "Emerald ring expanding from the card centre on a win."
+			}
+		],
+		"breakpoints": [
+			{ "name": "sm", "value": "640px" },
+			{ "name": "md", "value": "768px" }
+		]
+	},
+	"components": [
+		{
+			"name": "Bone Action Button",
+			"kind": "button",
+			"refersTo": "button-guess",
+			"description": "The decisive move in a round: Guess card, Results, Next Card.",
+			"html": "<button class=\"ds-btn-bone\">Guess card</button>",
+			"css": ".ds-btn-bone { display: inline-flex; align-items: center; justify-content: center; height: 36px; padding: 8px 16px; border-radius: 8px; border: 1px solid oklch(86.9% 0.022 252.894); background: #ffffff; color: oklch(20.8% 0.042 265.755); font: 600 14px/1.25 Inter, sans-serif; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); cursor: pointer; transition: background-color 150ms; } .ds-btn-bone:hover { background: oklch(96.8% 0.007 247.896); } .ds-btn-bone:active { background: oklch(92.9% 0.013 255.508); } .ds-btn-bone:focus-visible { outline: 2px solid oklch(74.6% 0.16 232.661); outline-offset: 2px; }"
+		},
+		{
+			"name": "Primary Button",
+			"kind": "button",
+			"refersTo": "button-primary",
+			"description": "shadcn default: active nav tab and dialog Submit.",
+			"html": "<button class=\"ds-btn-primary\">Submit</button>",
+			"css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 36px; padding: 8px 16px; border: 0; border-radius: 8px; background: oklch(0.922 0 0); color: oklch(0.205 0 0); font: 500 14px/1.25 Inter, sans-serif; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); cursor: pointer; transition: all 150ms; } .ds-btn-primary:hover { background: oklch(0.922 0 0 / 0.9); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 3px oklch(0.556 0 0 / 0.5); }"
+		},
+		{
+			"name": "Ghost Button",
+			"kind": "button",
+			"refersTo": "button-ghost",
+			"description": "Inactive nav tab.",
+			"html": "<button class=\"ds-btn-ghost\">Practice</button>",
+			"css": ".ds-btn-ghost { display: inline-flex; align-items: center; height: 32px; padding: 0 12px; border: 0; border-radius: 8px; background: transparent; color: oklch(0.985 0 0); font: 500 14px/1.25 Inter, sans-serif; cursor: pointer; transition: all 150ms; } .ds-btn-ghost:hover { background: oklch(0.269 0 0 / 0.5); } .ds-btn-ghost:focus-visible { outline: none; box-shadow: 0 0 0 3px oklch(0.556 0 0 / 0.5); }"
+		},
+		{
+			"name": "Keyboard Keys",
+			"kind": "custom",
+			"refersTo": "key-tile",
+			"description": "Bone game-piece keys in unplayed, revealed and missed states.",
+			"html": "<div class=\"ds-keys\"><button class=\"ds-key ds-key-hit\" disabled>A</button><button class=\"ds-key\">B</button><button class=\"ds-key\">C</button><button class=\"ds-key ds-key-hit\" disabled>E</button><button class=\"ds-key ds-key-miss\" disabled>Z</button><button class=\"ds-key\">7</button></div>",
+			"css": ".ds-keys { display: flex; flex-wrap: wrap; gap: 8px; padding: 16px; background: oklch(0.145 0 0); } .ds-key { width: 40px; height: 40px; border: 0; border-radius: 8px; background: oklch(92.9% 0.013 255.508); color: oklch(20.8% 0.042 265.755); font: 500 14px/1 Inter, sans-serif; cursor: pointer; transition: background-color 150ms; } .ds-key:hover { background: oklch(86.9% 0.022 252.894); } .ds-key:active { background: oklch(70.4% 0.04 256.788); } .ds-key:focus-visible { outline: none; box-shadow: 0 0 0 3px oklch(0.556 0 0 / 0.5); } .ds-key-hit { background: oklch(62.7% 0.194 149.214); color: #fff; opacity: 0.5; cursor: default; } .ds-key-miss { background: oklch(57.7% 0.245 27.325); color: #fff; opacity: 0.5; cursor: default; }"
+		},
+		{
+			"name": "Masked Card",
+			"kind": "card",
+			"refersTo": "card-slab",
+			"description": "The single lifted object: blue-black slab with black text panels and masked text.",
+			"html": "<div class=\"ds-card\"><div class=\"ds-card-top\"><span class=\"ds-card-pill\"><span class=\"ds-card-coin\">_</span></span><span class=\"ds-card-pill\">_/_</span></div><div class=\"ds-card-name\">A________ W_____</div><div class=\"ds-card-art\"></div><div class=\"ds-card-panel\"><div class=\"ds-card-type\">A_ O_______ M_____ _e_ __ ___e_</div><p class=\"ds-card-rules\">S__________\n\nG______ → D___ _ _____.</p></div></div>",
+			"css": ".ds-card { width: 280px; aspect-ratio: 380 / 531; display: flex; flex-direction: column; padding: 12px; border-radius: 24px; border: 1px solid oklch(37.2% 0.044 257.287 / 60%); background: linear-gradient(to bottom, rgba(9,13,23,0.72), rgba(9,13,23,0.78)), #0b1220; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); font-family: Inter, sans-serif; } .ds-card-top { display: flex; justify-content: space-between; align-items: center; } .ds-card-pill { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 9999px; background: #000; color: oklch(96.8% 0.007 247.896); font-weight: 700; font-size: 12px; letter-spacing: 0.05em; font-variant-numeric: tabular-nums; } .ds-card-coin { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 9999px; background: oklch(92.9% 0.013 255.508); color: oklch(20.8% 0.042 265.755); border: 1px solid oklch(27.9% 0.041 260.031 / 70%); box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05); } .ds-card-name { margin-top: 8px; padding: 8px 12px; border-radius: 8px; background: #000; color: oklch(96.8% 0.007 247.896); font-size: 16px; font-weight: 600; letter-spacing: 0.05em; } .ds-card-art { flex: 1; } .ds-card-panel { margin-top: 8px; overflow: hidden; border-radius: 14px; border: 1px solid oklch(44.6% 0.043 257.281 / 50%); background: #000; } .ds-card-type { padding: 4px 12px; border-bottom: 1px solid oklch(44.6% 0.043 257.281 / 50%); color: oklch(92.9% 0.013 255.508 / 90%); font-size: 12px; font-weight: 500; letter-spacing: 0.05em; } .ds-card-rules { margin: 0; padding: 8px 12px; white-space: pre-line; color: oklch(92.9% 0.013 255.508 / 90%); font-size: 12px; line-height: 1.375; letter-spacing: 0.05em; }"
+		},
+		{
+			"name": "Guess Meter",
+			"kind": "custom",
+			"description": "Seven segments filling with hit/miss as guesses are spent.",
+			"html": "<div class=\"ds-meter\"><span class=\"ds-seg ds-seg-hit\"></span><span class=\"ds-seg ds-seg-hit\"></span><span class=\"ds-seg ds-seg-miss\"></span><span class=\"ds-seg\"></span><span class=\"ds-seg\"></span><span class=\"ds-seg\"></span><span class=\"ds-seg\"></span></div>",
+			"css": ".ds-meter { display: flex; gap: 4px; width: 320px; padding: 12px; background: oklch(0.145 0 0); } .ds-seg { flex: 1; height: 8px; border-radius: 6px; background: oklch(44.6% 0.043 257.281 / 50%); } .ds-seg-hit { background: oklch(69.6% 0.17 162.48); } .ds-seg-miss { background: oklch(63.7% 0.237 25.331); }"
+		},
+		{
+			"name": "Streak Chip",
+			"kind": "chip",
+			"refersTo": "streak-chip",
+			"description": "Navbar daily streak count.",
+			"html": "<span class=\"ds-chip-streak\">Daily Streak: <span class=\"ds-num\">12</span></span>",
+			"css": ".ds-chip-streak { display: inline-block; padding: 4px 8px; border-radius: 8px; background: oklch(20.8% 0.042 265.755); color: #fff; font: 600 12px/1.333 Inter, sans-serif; } .ds-num { font-variant-numeric: tabular-nums; }"
+		},
+		{
+			"name": "Navigation",
+			"kind": "nav",
+			"description": "Fixed transparent blurred bar: wordmark left, mode tabs and streak right. (Snippet adds a 60% Midnight Table fill so it reads on the panel canvas; the real bar is fully transparent.)",
+			"html": "<header class=\"ds-nav\"><span class=\"ds-nav-brand\">Sorcerify</span><nav class=\"ds-nav-links\"><a class=\"ds-nav-tab ds-nav-tab-active\" href=\"#\">Daily</a><a class=\"ds-nav-tab\" href=\"#\">Practice</a><span class=\"ds-nav-streak\">Daily Streak: 3</span></nav></header>",
+			"css": ".ds-nav { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: oklch(0.145 0 0 / 0.6); backdrop-filter: blur(8px); font-family: Inter, sans-serif; } .ds-nav-brand { color: #fff; font-size: 18px; font-weight: 600; } .ds-nav-links { display: flex; align-items: center; gap: 8px; } .ds-nav-tab { display: inline-flex; align-items: center; height: 32px; padding: 0 12px; border-radius: 8px; color: oklch(0.985 0 0); font-size: 14px; font-weight: 500; text-decoration: none; transition: all 150ms; } .ds-nav-tab:hover { background: oklch(0.269 0 0 / 0.5); } .ds-nav-tab:focus-visible { outline: none; box-shadow: 0 0 0 3px oklch(0.556 0 0 / 0.5); } .ds-nav-tab-active, .ds-nav-tab-active:hover { background: oklch(0.922 0 0); color: oklch(0.205 0 0); } .ds-nav-streak { margin-left: 8px; padding: 4px 8px; border-radius: 8px; background: oklch(20.8% 0.042 265.755); color: #fff; font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }"
+		},
+		{
+			"name": "Name Guess Slots",
+			"kind": "input",
+			"refersTo": "name-slot",
+			"description": "Letter slots for typing the card name; revealed letters show as faint hints.",
+			"html": "<div class=\"ds-slots\"><div class=\"ds-slot-word\"><span class=\"ds-slot\">A</span><span class=\"ds-slot\">P</span><span class=\"ds-slot ds-slot-hint\">E</span><span class=\"ds-slot\"></span></div><div class=\"ds-slot-word\"><span class=\"ds-slot\"></span><span class=\"ds-slot ds-slot-sym\">-</span><span class=\"ds-slot\"></span></div></div>",
+			"css": ".ds-slots { display: inline-flex; flex-wrap: wrap; gap: 8px 20px; padding: 8px; border-radius: 8px; background: oklch(27.9% 0.041 260.031); font-family: Inter, sans-serif; } .ds-slot-word { display: flex; gap: 8px; } .ds-slot { display: grid; place-items: center; width: 36px; height: 40px; border-radius: 8px; background: oklch(86.9% 0.022 252.894 / 80%); color: oklch(20.8% 0.042 265.755); font-weight: 600; } .ds-slot-hint { color: oklch(20.8% 0.042 265.755 / 40%); } .ds-slot-sym { background: oklch(86.9% 0.022 252.894 / 60%); color: oklch(20.8% 0.042 265.755 / 60%); }"
+		}
+	],
+	"narrative": {
+		"northStar": "The Scrying Table",
+		"overview": "Sorcerify is a dark table lit by a single focus. In the middle of the room is one veiled card, its text hidden behind blanks, and the player leans in to read it by candlelight. Everything around the card is near-black, neutral and quiet. The page chrome takes no part in the magic. It holds the card, counts the guesses and gets out of the way. The arcane mood comes from three things the system does not draw itself: the Sorcerify logo, the dimmed Sorcery card back behind the masked card, and the four elemental threshold icons. The UI's job is to frame them, not compete with them.\n\nThe density is that of a single-column game board: the logo, the date, the card, the guess meter, the guess button, the keyboard. There's one decision on screen at a time, read top to bottom. The interface currently ships dark only (the `dark` class is hardcoded on `<html>`; the light tokens in `:root` are never shown), and the neutral tokens have zero chroma, so the only colour a player sees comes from the card itself and from feedback: green for a reveal, red for a miss. The pale bone tiles of the keyboard sit on the table like physical game pieces. They are the brightest objects after the card, because they are what the player touches.\n\nBright, busy chrome is rejected. No gradients, glows or neon on navigation, buttons, panels or backgrounds. Two things are allowed to sparkle. The logo is a brand asset and stays as drawn. The win burst is feedback, and it happens once.",
+		"keyCharacteristics": [
+			"Achromatic near-black stage. Colour only shows up as game feedback.",
+			"One lifted object, the masked card. Everything else lies flat on the table.",
+			"Pale, solid key tiles that change colour decisively once used.",
+			"Masked text keeps the shape of every word: underscores stand in for letters and digits, and punctuation and spacing stay visible.",
+			"Elemental thresholds are always shown as the four icon images, never as letters or emoji.",
+			"One sans family (Inter) everywhere. Tracking is widened on card text so the blanks read as discrete slots."
+		],
+		"rules": [
+			{
+				"name": "The Feedback-Only Colour Rule",
+				"body": "Chrome is achromatic. Hue appears only when it reports a game outcome (a revealed letter, a miss, a win or a loss) or when it comes from the card's own art and icons. A coloured nav bar, coloured panel or tinted page background breaks the table.",
+				"section": "colors"
+			},
+			{
+				"name": "The Two Signals Rule",
+				"body": "Green means \"this revealed something\", red means \"this didn't\". They keep that meaning everywhere: keys, meter, banners and the share squares. Never reuse them for decoration or for unrelated status.",
+				"section": "colors"
+			},
+			{
+				"name": "The Tabular Count Rule",
+				"body": "Every number that changes during play (guesses left, streaks, cost, life, attack/defence) uses tabular numerals, so the layout never jitters as values tick.",
+				"section": "typography"
+			},
+			{
+				"name": "The Slot Tracking Rule",
+				"body": "Masked card text always keeps `0.05em` tracking. Without it, runs of underscores merge into a single line and the word shapes, which are the game's main clue, disappear.",
+				"section": "typography"
+			},
+			{
+				"name": "The Single Lift Rule",
+				"body": "Only the card casts a structural shadow on the table. If a new panel, sheet or tile needs to stand out, give it tone or position, not a second big shadow. Dialogs are the only exception, because they are temporary.",
+				"section": "elevation"
+			}
+		],
+		"dos": [
+			"**Do** keep the page, navbar and dialogs on Midnight Table (`oklch(0.145 0 0)`), with zero-chroma neutrals for all chrome.",
+			"**Do** reserve green and red for reveal/miss and win/loss outcomes, in keys, meter, banners and share squares alike.",
+			"**Do** make the masked card the only object with a structural shadow (Card lift). Every other element lies flat.",
+			"**Do** style new interactive game pieces (keys, slots, decisive actions) as pale bone tiles with Tile Ink labels and 8px corners, so they read as things to touch.",
+			"**Do** keep `0.05em` tracking and `pre-line` wrapping on masked card text, so word shapes survive masking.",
+			"**Do** show elements with the four threshold icon images (`/threshold-icons/*.png`), in keys, on the card and inline in rules text.",
+			"**Do** use tabular numerals for every changing count.",
+			"**Do** keep every tap target at least 44 × 44px below 640px.",
+			"**Do** keep secondary copy at slate-400 (Dusk Caption) or lighter on Midnight Table."
+		],
+		"donts": [
+			"**Don't** put gradients, glows, neon or tinted backgrounds on chrome (navbar, buttons, panels, page). The logo and the one-shot win burst are the only things that sparkle.",
+			"**Don't** use green or red for decoration, branding or unrelated status.",
+			"**Don't** add a second lifted surface competing with the card, such as floating panels, elevated keyboards or shadowed cards in lists.",
+			"**Don't** redraw, recolour or restyle the logo illustration. The logo images in `public/` are the identity. The navbar's live-type \"Sorcerify\" label is plain UI text, not a second wordmark.",
+			"**Don't** replace threshold icons with letters, emoji or new icon sets."
+		]
+	}
 }
