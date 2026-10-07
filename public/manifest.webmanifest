@@ -1,5 +1,5 @@
 {
-  "background_color": "#ffffff",
+  "background_color": "#0a0a0a",
   "display": "standalone",
   "icons": [
     {
@@ -21,5 +21,5 @@
   "screenshots": [],
   "short_name": "Sorcerify",
   "start_url": "/",
-  "theme_color": "#BD34FE"
+  "theme_color": "#0a0a0a"
 }

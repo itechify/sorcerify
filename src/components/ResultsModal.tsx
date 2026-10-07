@@ -92,10 +92,10 @@ export function ResultsModal({
 						<div className='w-full flex justify-center'>
 							<img
 								alt={cardName}
-								className='h-auto max-h-[420px] w-full max-w-sm rounded-md object-contain'
-								height={512}
+								className='h-auto max-h-[420px] w-auto max-w-full rounded-md object-contain'
+								height={531}
 								src={cardImageUrl}
-								width={384}
+								width={380}
 							/>
 						</div>
 					) : null}
@@ -110,7 +110,12 @@ export function ResultsModal({
 						</div>
 					</div>
 				</div>
-				<output aria-live='polite' className='text-sm text-slate-300'>
+				<output
+					aria-live='polite'
+					className={
+						copied || copyFailed ? 'text-sm text-slate-300' : 'sr-only'
+					}
+				>
 					{copied && 'Result copied to clipboard.'}
 					{copyFailed &&
 						'Could not copy your result. Select and copy the text below, or try again.'}

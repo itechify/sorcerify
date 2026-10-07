@@ -132,11 +132,7 @@ function EndOfRoundActions({
 	if (hasWon || hasLost) {
 		return (
 			<div className='flex flex-wrap items-center justify-center gap-3'>
-				<Button
-					className='rounded-md border border-slate-300 bg-white cursor-pointer px-3 py-1 font-semibold text-slate-900 text-sm shadow hover:bg-slate-100 active:bg-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400'
-					onClick={onOpenResults}
-					type='button'
-				>
+				<Button onClick={onOpenResults} type='button' variant='game'>
 					Results
 				</Button>
 				{!persistKey && endOfRoundAction}
@@ -536,10 +532,11 @@ export function GameBoard({
 					<>
 						<div className='flex items-center justify-center gap-3 w-full'>
 							<Button
-								className='w-full sm:w-auto sm:flex-none whitespace-nowrap rounded-md border border-slate-300 bg-white cursor-pointer px-4 py-2 text-sm font-semibold text-slate-900 shadow hover:bg-slate-100 active:bg-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 disabled:opacity-50'
+								className='w-full sm:w-auto'
 								onClick={() => setNameGuessOpen(true)}
 								ref={guessButtonRef}
 								type='button'
+								variant='game'
 							>
 								Guess card
 							</Button>
