@@ -97,7 +97,7 @@ export function Keyboard({
 		return (
 			<Button
 				aria-describedby={isGuessed ? `${outcomeId}-${char}` : undefined}
-				className={`relative size-8 sm:size-10 transition-colors ${colorClass}`}
+				className={`relative size-11 sm:size-10 ${isGuessed ? 'disabled:opacity-100' : ''} ${colorClass}`}
 				disabled={disabled || isGuessed}
 				key={char}
 				onClick={() => onPress(char)}
@@ -126,20 +126,27 @@ export function Keyboard({
 	}
 
 	return (
-		<div className='flex flex-col gap-2 w-full'>
+		<div className='flex flex-col items-center gap-3 w-full'>
 			<fieldset
 				aria-label='Letters'
 				className='flex min-w-0 flex-wrap justify-center gap-1 sm:gap-2 w-full'
 			>
 				{letters.map(renderButton)}
 			</fieldset>
-			<fieldset
-				aria-label='Numbers and elemental thresholds'
-				className='flex min-w-0 flex-wrap justify-center gap-1 sm:gap-2 w-full'
-			>
-				{digits.map(renderButton)}
-				{thresholds.map(renderButton)}
-			</fieldset>
+			<div className='flex w-full flex-wrap items-center justify-center gap-3 sm:flex-col'>
+				<fieldset
+					aria-label='Numbers'
+					className='grid min-w-0 grid-cols-5 gap-1 sm:grid-cols-10'
+				>
+					{digits.map(renderButton)}
+				</fieldset>
+				<fieldset
+					aria-label='Elemental thresholds'
+					className='grid min-w-0 grid-cols-4 gap-1 min-[380px]:grid-cols-2 sm:grid-cols-4 sm:gap-2'
+				>
+					{thresholds.map(renderButton)}
+				</fieldset>
+			</div>
 		</div>
 	)
 }

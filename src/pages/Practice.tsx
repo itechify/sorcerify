@@ -40,9 +40,11 @@ export function Practice() {
 			<div className='relative pt-4 px-4 pb-8 w-full'>
 				<Button
 					aria-label='How to play'
-					className='absolute right-4 top-4 rounded-full border-0 bg-transparent p-2 text-slate-200 hover:bg-slate-900/30 active:bg-slate-900/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 cursor-pointer'
+					className='absolute right-4 top-4 rounded-full text-slate-400 hover:text-slate-200'
 					onClick={() => setInfoOpen(true)}
+					size='icon'
 					type='button'
+					variant='ghost'
 				>
 					<svg
 						aria-hidden='true'
@@ -72,11 +74,7 @@ export function Practice() {
 						card={card}
 						endOfRoundAction={
 							roundEnded ? (
-								<Button
-									className='rounded-md border border-slate-300 bg-white cursor-pointer px-3 py-1 font-semibold text-slate-900 text-sm shadow hover:bg-slate-100 active:bg-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400'
-									onClick={resetCard}
-									type='button'
-								>
+								<Button onClick={resetCard} type='button' variant='game'>
 									Next Card
 								</Button>
 							) : null
